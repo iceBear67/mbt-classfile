@@ -1,0 +1,7 @@
+{
+    "import": [
+        "iceBear67/classfile",
+        "iceBear67/bytebuf",
+        "moonbitlang/x/encoding"
+    ]
+}
