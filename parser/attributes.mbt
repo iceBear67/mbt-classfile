@@ -73,10 +73,13 @@ fn parse_attribute_sealed_classes(
   constant : @classfile.ConstantPool,
 ) -> @classfile.AttributeInfo {
   guard self.read_uint16() is Some(count)
-  @classfile.PermittedSubclasses(FixedArray::makei(count.to_int(), _=>{
-    guard self.read_uint16() is Some(idx) && constant.at(idx.to_int()) is Class(classInfo)
-    classInfo
-  }))
+  @classfile.PermittedSubclasses(
+    FixedArray::makei(count.to_int(), _ => {
+      guard self.read_uint16() is Some(idx) &&
+        constant.at(idx.to_int()) is Class(classInfo)
+      classInfo
+    }),
+  )
 }
 
 ///|
@@ -161,7 +164,9 @@ fn parse_attribute_method_params(
       guard constant.at(name_index.reinterpret_as_int()) is Utf8(name)
       @classfile.MethodParameter::{
         name,
-        access_flags: access_flags.reinterpret_as_int().to_uint16(),
+        access_flags: @classfile.to_method_modifiers(
+          access_flags.reinterpret_as_int().to_uint16(),
+        ),
       }
     }),
   )
@@ -379,7 +384,9 @@ fn parse_attribute_inner_classes(
       ) else {
       raise fail("Unexpected EOF when reading InnerClasses attribute")
     }
-    let inner_class_entry = constant.at(inner_class_info_index.reinterpret_as_int())
+    let inner_class_entry = constant.at(
+      inner_class_info_index.reinterpret_as_int(),
+    )
     guard inner_class_entry is Class(inner_class) else {
       raise fail(
         "Expect constant entry `class info` but got \{inner_class_entry}",
@@ -387,7 +394,9 @@ fn parse_attribute_inner_classes(
     }
     let mut outer_class : @classfile.ConstantClassInfo? = None
     if outer_class_info_index != 0 {
-      let outer_class_entry = constant.at(outer_class_info_index.reinterpret_as_int())
+      let outer_class_entry = constant.at(
+        outer_class_info_index.reinterpret_as_int(),
+      )
       guard outer_class_entry is Class(oc) else {
         raise fail(
           "Expect constant entry `class info` but got \{outer_class_entry}",
@@ -404,9 +413,9 @@ fn parse_attribute_inner_classes(
       inner_class,
       outer_class,
       inner_name,
-      inner_class_access_flags: inner_class_access_flags
-      .reinterpret_as_int()
-      .to_uint16(),
+      inner_class_access_flags: @classfile.to_class_modifiers(
+        inner_class_access_flags.reinterpret_as_int().to_uint16(),
+      ),
     }
   })
   return InnerClasses(@classfile.InnerClassAttribute::{ classes, })

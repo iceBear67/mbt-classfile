@@ -1,0 +1,10 @@
+{
+    "is-main": true,
+    "import": [
+      "iceBear67/classfile/parser",
+      "moonbitlang/x/sys",
+      "moonbitlang/x/fs",
+      "iceBear67/classfile",
+      "iceBear67/bytebuf"
+    ]
+}

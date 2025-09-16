@@ -25,20 +25,23 @@ pub fn parse_class(view : &@bytebuf.ByteBuf) -> @classfile.ClassFile raise {
     raise fail("Expect class header but EOF.")
   }
   let _thisClass = constant_pool.at(thisClassIdx.reinterpret_as_int())
-  guard _thisClass is @classfile.Class(thisClass) else {
+  guard _thisClass is @classfile.Class(thisClassC) &&
+    constant_pool.at(thisClassC.name_index.reinterpret_as_int())
+    is Utf8(thisClass) else {
     raise fail("Unexpected thisClass type: \{_thisClass}")
   }
-  let mut superClass : @classfile.ConstantClassInfo? = None
+  let mut superClass : String? = None
   if superClassIdx != 0 {
     guard constant_pool.at(superClassIdx.reinterpret_as_int())
-      is @classfile.Class(sc)
+      is @classfile.Class(scc) && constant_pool.at(scc.name_index.reinterpret_as_int()) is Utf8(sc)
     superClass = Some(sc)
   }
   let interfaces = view
     .parse_interfaces()
     .map(u => {
-      guard constant_pool.at(u.reinterpret_as_int()) is Class(classInfo)
-      classInfo
+      guard constant_pool.at(u.reinterpret_as_int()) is Class(classInfo) &&
+      constant_pool.at(classInfo.name_index.reinterpret_as_int()) is Utf8(name)
+      name
     })
   let fields = view.parse_fields(constant_pool)
   let methods = view.parse_methods(constant_pool)
@@ -46,8 +49,8 @@ pub fn parse_class(view : &@bytebuf.ByteBuf) -> @classfile.ClassFile raise {
   @classfile.ClassFile::{
     minor_version: minor.reinterpret_as_int().to_uint16(),
     major_version: major.reinterpret_as_int().to_uint16(),
-    constant_pool: constant_pool,
-    access_flags: accessFlags,
+    constant_pool,
+    access_flags: @classfile.to_class_modifiers(accessFlags),
     this_class: thisClass,
     super_class: superClass,
     interfaces,

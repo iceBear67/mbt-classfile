@@ -84,7 +84,7 @@ pub(all) struct InnerClassInfo {
   ///  then the value of the outer_class_info_index item must be zero, indicating a None.
   outer_class : ConstantClassInfo?
   inner_name : String
-  inner_class_access_flags : UInt16
+  inner_class_access_flags : Modifiers
 } derive(Show, Eq)
 
 ///|
@@ -151,7 +151,7 @@ pub(all) struct BootstrapMethod {
 ///|
 pub(all) struct MethodParameter {
   name : String
-  access_flags : UInt16
+  access_flags : Modifiers
 } derive(Show, Eq)
 
 ///|
