@@ -1,3 +1,7 @@
 {
-    "import": []
+    "test-import": [
+      "moonbitlang/x/fs",
+      "iceBear67/bytebuf",
+      "iceBear67/classfile/parser"
+    ]
 }

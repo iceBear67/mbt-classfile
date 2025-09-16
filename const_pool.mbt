@@ -1,7 +1,15 @@
 // https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-4.html#jvms-4.4
 
+///|
+pub(all) struct ConstantPool {
+  internal_arr : FixedArray[ConstantType]
+} derive(Eq, Show)
 
-pub typealias FixedArray[ConstantType] as ConstantPool
+///|
+pub fn at(self : ConstantPool, idx : Int) -> ConstantType {
+  self.internal_arr[idx - 1]
+}
+
 ///|
 pub(all) enum ConstantType {
   Class(ConstantClassInfo)

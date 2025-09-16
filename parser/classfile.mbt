@@ -2,52 +2,54 @@
 pub fn parse_class(view : &@bytebuf.ByteBuf) -> @classfile.ClassFile raise {
   // A class file consists of a stream of 8-bit bytes. 16-bit and 32-bit quantities are constructed by reading in two 
   // and four consecutive 8-bit bytes, respectively. Multibyte data items are always stored in big-endian order
-  // where the high bytes come first. This chapter defines the data types u1, u2, and u4 to represent an unsigned one-, two-
+  // where the high bytes come first. This chapter defines the data types u1, u16, and u32 to represent an unsigned one-, two-
   // or four-byte quantity, respectively.
 
-  // u4             magic;
-  // u2             minor_version;
-  // u2             major_version;
-  // u2             constant_pool_count;
-  guard view.read_bytes(4 + 2 + 2 + 2) is Some(data) else {
+  // u32             magic;
+  // u16             minor_version;
+  // u16             major_version;
+  guard view.read_bytes(4 + 2 + 2)
+    is Some([u32(magic), u16(minor), u16(major), ..]) else {
     raise fail("Expect class header but EOF.")
   }
-  guard data[:] is [u4(magic), u2(minor), u2(major)] &&
-    magic == @classfile.JavaClassFile else {
+  guard magic == @classfile.JavaClassFile else {
     raise fail("Invalid class file magic number.")
   }
+  // u16             constant_pool_count;
   let constant_pool = view.parse_constant_pool()
-  // u2             access_flags;
-  // u2             this_class;
-  // u2             super_class;
+  // u16             access_flags;
+  // u16             this_class;
+  // u16             super_class;
   guard view.read_uint16() is Some(accessFlags)
-  guard view.read_bytes(2 + 2) is Some([u2(thisClassIdx), u2(superClassIdx)]) else {
+  guard view.read_bytes(2 + 2) is Some([u16(thisClassIdx), u16(superClassIdx)]) else {
     raise fail("Expect class header but EOF.")
   }
-  guard constant_pool[thisClassIdx.reinterpret_as_int()]
-    is @classfile.Utf8(thisClass)
-  let mut superClass : String? = None
+  let _thisClass = constant_pool.at(thisClassIdx.reinterpret_as_int())
+  guard _thisClass is @classfile.Class(thisClass) else {
+    raise fail("Unexpected thisClass type: \{_thisClass}")
+  }
+  let mut superClass : @classfile.ConstantClassInfo? = None
   if superClassIdx != 0 {
-    guard constant_pool[superClassIdx.reinterpret_as_int()]
-      is @classfile.Utf8(sc)
+    guard constant_pool.at(superClassIdx.reinterpret_as_int())
+      is @classfile.Class(sc)
     superClass = Some(sc)
   }
   let interfaces = view
     .parse_interfaces()
     .map(u => {
-      guard constant_pool[u.reinterpret_as_int()] is Class(classInfo)
+      guard constant_pool.at(u.reinterpret_as_int()) is Class(classInfo)
       classInfo
     })
   let fields = view.parse_fields(constant_pool)
   let methods = view.parse_methods(constant_pool)
   let attributes = view.parse_attributes(constant_pool)
   @classfile.ClassFile::{
-    minorVersion: minor.reinterpret_as_int().to_uint16(),
-    majorVersion: major.reinterpret_as_int().to_uint16(),
-    constantPool: constant_pool,
-    accessFlags,
-    thisClass: thisClass,
-    superClass,
+    minor_version: minor.reinterpret_as_int().to_uint16(),
+    major_version: major.reinterpret_as_int().to_uint16(),
+    constant_pool: constant_pool,
+    access_flags: accessFlags,
+    this_class: thisClass,
+    super_class: superClass,
     interfaces,
     fields,
     methods,
@@ -106,7 +108,9 @@ fn parse_constant_pool(
   guard self.read_uint16() is Some(count) else {
     raise fail("Invalid constant pool count.")
   }
-  FixedArray::makei(count.to_int(), _ => self.parse_constant_entry())
+  @classfile.ConstantPool::{
+    internal_arr: FixedArray::makei(count.to_int() - 1, _ => self.parse_constant_entry()),
+  }
 }
 
 ///|

@@ -11,7 +11,7 @@ fn parse_const_fieldref_info(
   buf : &@bytebuf.ByteBuf,
 ) -> @classfile.ConstantFieldRefInfo raise {
   guard buf.read_bytes(2 + 2) is Some(data) &&
-    data is [u2(class_index), u2(name_and_type_index)] else {
+    data is [u16(class_index), u16(name_and_type_index)] else {
     raise fail("Invalid @classfile.Constant pool entry.")
   }
   @classfile.ConstantFieldRefInfo::{ class_index, name_and_type_index }
@@ -22,7 +22,7 @@ fn parse_const_methodref_info(
   buf : &@bytebuf.ByteBuf,
 ) -> @classfile.ConstantMethodRefInfo raise {
   guard buf.read_bytes(2 + 2) is Some(data) &&
-    data is [u2(class_index), u2(name_and_type_index)] else {
+    data is [u16(class_index), u16(name_and_type_index)] else {
     raise fail("Invalid @classfile.Constant pool entry.")
   }
   @classfile.ConstantMethodRefInfo::{ class_index, name_and_type_index }
@@ -33,7 +33,7 @@ fn parse_const_interfacemethodref_info(
   buf : &@bytebuf.ByteBuf,
 ) -> @classfile.ConstantInterfaceMethodRefInfo raise {
   guard buf.read_bytes(2 + 2) is Some(data) &&
-    data is [u2(class_index), u2(name_and_type_index)] else {
+    data is [u16(class_index), u16(name_and_type_index)] else {
     raise fail("Invalid @classfile.Constant pool entry.")
   }
   @classfile.ConstantInterfaceMethodRefInfo::{ class_index, name_and_type_index }
@@ -67,7 +67,7 @@ fn parse_const_float_info(buf : &@bytebuf.ByteBuf) -> @classfile.ConstantFloatIn
 
 ///|
 fn parse_const_long_info(buf : &@bytebuf.ByteBuf) -> @classfile.ConstantLongInfo raise {
-  guard buf.read_bytes(8) is Some(data) && data is [u4(high), u4(low)] else {
+  guard buf.read_bytes(8) is Some(data) && data is [u32(high), u32(low)] else {
     raise fail("Invalid @classfile.Constant pool entry.")
   }
   let value = ((high.to_uint64() << 32) | low.to_uint64()).reinterpret_as_int64()
@@ -85,7 +85,7 @@ fn parse_const_name_and_type_info(
   buf : &@bytebuf.ByteBuf,
 ) -> @classfile.ConstantNameAndTypeInfo raise {
   guard buf.read_bytes(2 + 2) is Some(data) &&
-    data is [u2(name_index), u2(descriptor_index)] else {
+    data is [u16(name_index), u16(descriptor_index)] else {
     raise fail("Invalid @classfile.Constant pool entry.")
   }
   @classfile.ConstantNameAndTypeInfo::{ name_index, descriptor_index }
@@ -100,7 +100,11 @@ fn parse_const_utf8_info(buf : &@bytebuf.ByteBuf) -> String raise {
   guard buf.read_bytes(length.to_int()) is Some(data) else {
     raise fail("Invalid @classfile.Constant pool entry.")
   }
-  @encoding.decoder(UTF8).decode(data)
+  try @encoding.decoder(UTF8).decode(data) catch {
+    err => raise fail("Failed to decode string \{data}: \{err}")
+  } noraise {
+    v => return v
+  }
 }
 
 ///|
@@ -108,7 +112,7 @@ fn parse_const_method_handle_info(
   buf : &@bytebuf.ByteBuf,
 ) -> @classfile.ConstantMethodHandleInfo raise {
   guard buf.read_bytes(1 + 2) is Some(data) &&
-    data is [u1(reference_kind), u2(reference_index)] else {
+    data is [u1(reference_kind), u16(reference_index)] else {
     raise fail("Invalid @classfile.Constant pool entry.")
   }
   @classfile.ConstantMethodHandleInfo::{ reference_kind: reference_kind.to_byte(), reference_index }
@@ -125,7 +129,7 @@ fn parse_const_method_type_info(buf : &@bytebuf.ByteBuf) -> @classfile.ConstantM
 ///|
 fn parse_const_dynamic_info(buf : &@bytebuf.ByteBuf) -> @classfile.ConstantDynamicInfo raise {
   guard buf.read_bytes(2 + 2) is Some(data) &&
-    data is [u2(bootstrap_method_attr_index), u2(name_and_type_index)] else {
+    data is [u16(bootstrap_method_attr_index), u16(name_and_type_index)] else {
     raise fail("Invalid @classfile.Constant pool entry.")
   }
   @classfile.ConstantDynamicInfo::{ bootstrap_method_attr_index, name_and_type_index }
@@ -136,7 +140,7 @@ fn parse_const_invoke_dynamic_info(
   buf : &@bytebuf.ByteBuf,
 ) -> @classfile.ConstantInvokeDynamicInfo raise {
   guard buf.read_bytes(2 + 2) is Some(data) &&
-    data is [u2(bootstrap_method_attr_index), u2(name_and_type_index)] else {
+    data is [u16(bootstrap_method_attr_index), u16(name_and_type_index)] else {
     raise fail("Invalid @classfile.Constant pool entry.")
   }
   @classfile.ConstantInvokeDynamicInfo::{ bootstrap_method_attr_index, name_and_type_index }

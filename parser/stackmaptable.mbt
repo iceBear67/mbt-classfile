@@ -88,7 +88,7 @@ fn parse_verification_type(
           "Unexpected EOF when reading verification type of stackmaptable.",
         )
       }
-      let entry = constant[cpool_index.to_int()]
+      let entry = constant.at(cpool_index.to_int())
       guard entry is Class(classInfo) else {
         raise fail("Expect constant entry `class info` but got \{entry}")
       }

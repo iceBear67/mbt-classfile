@@ -2,19 +2,19 @@
 pub(all) struct Annotation {
   type_descriptor : String
   element_value_pairs : FixedArray[ElementValuePair]
-}
+}derive (Show, Eq)
 
 ///|
 pub(all) struct ElementValuePair {
   element_name : String
   value : ElementValue // todo the fucking union
-}
+}derive (Show, Eq)
 
 ///|
 pub(all) struct ElementEnumConstant {
   type_name : String
   const_name : String
-}
+}derive (Show, Eq)
 
 // https://docs.oracle.com/javase/specs/jvms/se11/html/jvms-4.html#jvms-4.7.16.1-130
 
@@ -27,12 +27,12 @@ pub(all) enum ElementValue {
   ClassInfo(String)
   AnnotationValue(Annotation)
   Array(FixedArray[ElementValue])
-}
+}derive (Show, Eq)
 
 ///|
 pub(all) struct ParameterAnnotation {
   annotations : FixedArray[Annotation]
-}
+}derive (Show, Eq)
 ///|
 pub(all) struct TypeAnnotation {
   target_type : Byte
@@ -40,7 +40,7 @@ pub(all) struct TypeAnnotation {
   type_path : TypePath
   type_descriptor : String
   element_value_pairs : FixedArray[ElementValuePair]
-}
+}derive (Show, Eq)
 
 ///|
 pub typealias FixedArray[TypePathPart] as TypePath
@@ -51,7 +51,7 @@ pub(all) enum TypePathPart {
   NestedType(Byte)
   WildcardType(Byte)
   TypeArgument(Byte)
-}
+}derive (Show, Eq)
 
 ///|
 pub(all) enum TypeAnnotationTargetInfo {
@@ -66,11 +66,11 @@ pub(all) enum TypeAnnotationTargetInfo {
   CatchTarget(Byte)
   OffsetTarget(UInt16)
   TypeArgumentTarget(UInt16, Byte)
-}
+}derive (Show, Eq)
 
 ///|
 pub(all) struct LocalVarTargetEntry {
   start_pc : UInt16
   length : UInt16
   index : UInt16
-}
+}derive (Show, Eq)

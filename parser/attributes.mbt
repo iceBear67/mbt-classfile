@@ -1,15 +1,15 @@
 ///|
 fn parse_attribute_info(
   self : &@bytebuf.ByteBuf,
-  constant : FixedArray[@classfile.ConstantType],
+  constant : @classfile.ConstantPool,
 ) -> @classfile.AttributeInfo raise {
   guard self.read_bytes(2 + 4)
-    is Some([u2(attribute_name_index), u4(attribute_length)]) else {
+    is Some([u16(attribute_name_index), u32(attribute_length)]) else {
     raise fail("Expect attribute info but got EOF.")
   }
-  guard constant[attribute_name_index.reinterpret_as_int()] is Utf8(name) else {
+  guard constant.at(attribute_name_index.reinterpret_as_int()) is Utf8(name) else {
     raise fail(
-      "Expect UTF8 when reading attribute name but got \{constant[attribute_name_index.reinterpret_as_int()]}",
+      "Expect UTF8 when reading attribute name but got \{constant.at(attribute_name_index.reinterpret_as_int())}",
     )
   }
   match name {
@@ -74,7 +74,7 @@ fn parse_attribute_sealed_classes(
 ) -> @classfile.AttributeInfo {
   guard self.read_uint16() is Some(count)
   @classfile.PermittedSubclasses(FixedArray::makei(count.to_int(), _=>{
-    guard self.read_uint16() is Some(idx) && constant[idx.to_int()] is Class(classInfo)
+    guard self.read_uint16() is Some(idx) && constant.at(idx.to_int()) is Class(classInfo)
     classInfo
   }))
 }
@@ -87,9 +87,9 @@ fn parse_attribute_record(
   guard self.read_uint16() is Some(count)
   Record(
     FixedArray::makei(count.to_int(), _ => {
-      guard self.read_bytes(4) is Some([u2(name_index), u2(descriptor_index)]) &&
-        constant[name_index.reinterpret_as_int()] is Utf8(name) &&
-        constant[descriptor_index.reinterpret_as_int()] is Utf8(descriptor)
+      guard self.read_bytes(4) is Some([u16(name_index), u16(descriptor_index)]) &&
+        constant.at(name_index.reinterpret_as_int()) is Utf8(name) &&
+        constant.at(descriptor_index.reinterpret_as_int()) is Utf8(descriptor)
       @classfile.RecordComponent::{
         name,
         descriptor,
@@ -105,7 +105,7 @@ fn parse_attribute_module_main(
   constant : @classfile.ConstantPool,
 ) -> @classfile.AttributeInfo {
   guard self.read_uint16() is Some(index) &&
-    constant[index.to_int()] is Class(classInfo)
+    constant.at(index.to_int()) is Class(classInfo)
   return ModuleMainClass(classInfo)
 }
 
@@ -115,7 +115,7 @@ fn parse_attribute_nest_host(
   constant : @classfile.ConstantPool,
 ) -> @classfile.AttributeInfo {
   guard self.read_uint16() is Some(index) &&
-    constant[index.to_int()] is Class(classInfo)
+    constant.at(index.to_int()) is Class(classInfo)
   return NestHost(classInfo)
 }
 
@@ -128,7 +128,7 @@ fn parse_attribute_nest_members(
   return NestMembers(
     FixedArray::makei(num.to_int(), _ => {
       guard self.read_uint16() is Some(index) &&
-        constant[index.to_int()] is Class(classInfo)
+        constant.at(index.to_int()) is Class(classInfo)
       classInfo
     }),
   )
@@ -143,7 +143,7 @@ fn parse_attribute_module_packages(
   return ModulePackages(@classfile.ModulePackagesAttribute::{
     package_index: FixedArray::makei(package_count.to_int(), _ => {
       guard self.read_uint16() is Some(index) &&
-        constant[index.to_int()] is Package(packageInfo)
+        constant.at(index.to_int()) is Package(packageInfo)
       packageInfo
     }),
   })
@@ -157,8 +157,8 @@ fn parse_attribute_method_params(
   guard self.read_byte() is Some(paramCount)
   return MethodParameters(
     FixedArray::makei(paramCount.to_int(), _ => {
-      guard self.read_bytes(4) is Some([u2(name_index), u2(access_flags)])
-      guard constant[name_index.reinterpret_as_int()] is Utf8(name)
+      guard self.read_bytes(4) is Some([u16(name_index), u16(access_flags)])
+      guard constant.at(name_index.reinterpret_as_int()) is Utf8(name)
       @classfile.MethodParameter::{
         name,
         access_flags: access_flags.reinterpret_as_int().to_uint16(),
@@ -207,7 +207,7 @@ fn parse_attribute_linenumber_table(
 ) -> @classfile.AttributeInfo raise {
   let line_number_table_length = self.read_uint16().unwrap().to_int()
   let line_number_table = FixedArray::makei(line_number_table_length, _ => {
-    guard self.read_bytes(2 + 2) is Some([u2(start_pc), u2(line_number)]) else {
+    guard self.read_bytes(2 + 2) is Some([u16(start_pc), u16(line_number)]) else {
       raise fail("Unexpected EOF when reading LineNumberTable attribute")
     }
     @classfile.LineNumberTableEntry::{
@@ -241,7 +241,7 @@ fn parse_attribute_source_file(
   guard self.read_uint16() is Some(index) else {
     raise fail("Unexpected EOF when reading SourceFile attribute")
   }
-  let entry = constant[index.to_int()]
+  let entry = constant.at(index.to_int())
   guard entry is Utf8(sourceFile) else {
     raise fail("Expect constant entry `utf8` but got \{entry}")
   }
@@ -256,7 +256,7 @@ fn parse_attribute_signature(
   guard self.read_uint16() is Some(index) else {
     raise fail("Unexpected EOF when reading Signature attribute")
   }
-  let entry = constant[index.to_int()]
+  let entry = constant.at(index.to_int())
   guard entry is Utf8(signature) else {
     raise fail("Expect constant entry `utf8` but got \{entry}")
   }
@@ -272,7 +272,7 @@ fn parse_attribute_constant_value(
     raise fail("Unexpected EOF when reading @classfile.ConstantValue attribute")
   }
   return @classfile.ConstantValue(@classfile.ConstantValueAttribute::{
-    constant_value: constant[index.to_int()],
+    constant_value: constant.at(index.to_int()),
   })
 }
 
@@ -298,7 +298,7 @@ fn parse_attribute_exceptions(
     guard self.read_uint16() is Some(index) else {
       raise fail("Unexpected EOF when reading Exceptions attribute")
     }
-    let entry = constant[index.to_int()]
+    let entry = constant.at(index.to_int())
     guard entry is Class(classInfo) else {
       raise fail("Expect constant entry `class info` but got \{entry}")
     }
@@ -312,16 +312,16 @@ fn parse_attribute_enclosing_method(
   self : &@bytebuf.ByteBuf,
   constant : @classfile.ConstantPool,
 ) -> @classfile.AttributeInfo raise {
-  guard self.read_bytes(2 + 2) is Some([u2(class_index), u2(method_index)]) else {
+  guard self.read_bytes(2 + 2) is Some([u16(class_index), u16(method_index)]) else {
     raise fail("Unexpected EOF when reading EnclosingMethod attribute")
   }
-  let class_entry = constant[class_index.reinterpret_as_int()]
+  let class_entry = constant.at(class_index.reinterpret_as_int())
   guard class_entry is Class(classInfo) else {
     raise fail("Expect constant entry `class info` but got \{class_entry}")
   }
   let mut methodInfo : @classfile.ConstantNameAndTypeInfo? = None
   if method_index != 0 {
-    let method_entry = constant[method_index.reinterpret_as_int()]
+    let method_entry = constant.at(method_index.reinterpret_as_int())
     guard method_entry is NameAndType(mnt) else {
       raise fail(
         "Expect constant entry `name and type info` but got \{method_entry}",
@@ -341,7 +341,7 @@ fn parse_attribute_code(
   constant : @classfile.ConstantPool,
 ) -> @classfile.AttributeInfo raise {
   guard self.read_bytes(2 + 2 + 4)
-    is Some([u2(max_stack), u2(max_locals), u2(code_length)]) else {
+    is Some([u16(max_stack), u16(max_locals), u32(code_length)]) else {
     raise fail("Unexpected EOF when reading Code attribute")
   }
   guard self.read_bytes(code_length.reinterpret_as_int()) is Some(code_data) else {
@@ -371,15 +371,15 @@ fn parse_attribute_inner_classes(
     guard self.read_bytes(2 + 2 + 2 + 2)
       is Some(
         [
-          u2(inner_class_info_index),
-          u2(outer_class_info_index),
-          u2(inner_name_index),
-          u2(inner_class_access_flags),
+          u16(inner_class_info_index),
+          u16(outer_class_info_index),
+          u16(inner_name_index),
+          u16(inner_class_access_flags),
         ]
       ) else {
       raise fail("Unexpected EOF when reading InnerClasses attribute")
     }
-    let inner_class_entry = constant[inner_class_info_index.reinterpret_as_int()]
+    let inner_class_entry = constant.at(inner_class_info_index.reinterpret_as_int())
     guard inner_class_entry is Class(inner_class) else {
       raise fail(
         "Expect constant entry `class info` but got \{inner_class_entry}",
@@ -387,7 +387,7 @@ fn parse_attribute_inner_classes(
     }
     let mut outer_class : @classfile.ConstantClassInfo? = None
     if outer_class_info_index != 0 {
-      let outer_class_entry = constant[outer_class_info_index.reinterpret_as_int()]
+      let outer_class_entry = constant.at(outer_class_info_index.reinterpret_as_int())
       guard outer_class_entry is Class(oc) else {
         raise fail(
           "Expect constant entry `class info` but got \{outer_class_entry}",
@@ -395,9 +395,9 @@ fn parse_attribute_inner_classes(
       }
       outer_class = Some(oc)
     }
-    guard constant[inner_name_index.reinterpret_as_int()] is Utf8(inner_name) else {
+    guard constant.at(inner_name_index.reinterpret_as_int()) is Utf8(inner_name) else {
       raise fail(
-        "Expect constant entry `utf8` but got \{constant[inner_name_index.reinterpret_as_int()]}",
+        "Expect constant entry `utf8` but got \{constant.at(inner_name_index.reinterpret_as_int())}",
       )
     }
     @classfile.InnerClassInfo::{
@@ -421,17 +421,17 @@ fn parse_bootstrap_methods(
   return BootstrapMethods(
     FixedArray::makei(num_bootstrap_methods.to_int(), _ => {
       guard self.read_bytes(2 + 2)
-        is Some([u2(bootstrapMethodRef), u2(numBootstrapArguments)]) else {
+        is Some([u16(bootstrapMethodRef), u16(numBootstrapArguments)]) else {
         raise fail("EOF at reading Bootstrap Methods")
       }
-      let bsMethodRef = constant[bootstrapMethodRef.reinterpret_as_int()]
+      let bsMethodRef = constant.at(bootstrapMethodRef.reinterpret_as_int())
       guard bsMethodRef is MethodHandle(refMH) else {
         raise fail("Expect method handle but got \{bsMethodRef}")
       }
       let bootstrap_arguments = FixedArray::makei(
         numBootstrapArguments.reinterpret_as_int(),
         _ => {
-          guard self.read_uint16().map(i => constant[i.to_int()]) is Some(mh)
+          guard self.read_uint16().map(i => constant.at(i.to_int())) is Some(mh)
           mh
         },
       )
@@ -449,12 +449,12 @@ fn parse_exception_table(
   constant : @classfile.ConstantPool,
 ) -> @classfile.ExceptionTableEntry raise {
   guard self.read_bytes(2 + 2 + 2 + 2)
-    is Some([u2(start_pc), u2(end_pc), u2(handler_pc), u2(catch_type)]) else {
+    is Some([u16(start_pc), u16(end_pc), u16(handler_pc), u16(catch_type)]) else {
     raise fail("Unexpected EOF when reading exception table")
   }
   let mut classInfo : @classfile.ConstantClassInfo? = None
   if catch_type != 0 {
-    let entry = constant[catch_type.reinterpret_as_int()]
+    let entry = constant.at(catch_type.reinterpret_as_int())
     guard entry is Class(ci) else {
       raise fail("Expect constant entry `class info` but got \{entry}")
     }
@@ -474,23 +474,23 @@ fn parse_module(
   constant : @classfile.ConstantPool,
 ) -> @classfile.AttributeInfo {
   guard self.read_bytes(3 * 2)
-    is Some([u2(mod_name_index), u2(mod_flags), u2(mod_ver_index)]) &&
-    constant[mod_name_index.reinterpret_as_int()] is Utf8(modName)
+    is Some([u16(mod_name_index), u16(mod_flags), u16(mod_ver_index)]) &&
+    constant.at(mod_name_index.reinterpret_as_int()) is Utf8(modName)
   let modName = modName
   let mut modVersion : String? = None
   if mod_ver_index != 0 &&
-    constant[mod_ver_index.reinterpret_as_int()] is Utf8(modVer) {
+    constant.at(mod_ver_index.reinterpret_as_int()) is Utf8(modVer) {
     modVersion = Some(modVer)
   }
   guard self.read_uint16() is Some(requiresCount)
   let requires = FixedArray::makei(requiresCount.to_int(), _ => {
     guard self.read_bytes(3 * 2)
       is Some(
-        [u2(requires_index), u2(requires_flags), u2(requires_versions_index)]
+        [u16(requires_index), u16(requires_flags), u16(requires_versions_index)]
       ) &&
-      constant[requires_index.reinterpret_as_int()] is Module(requiresName)
+      constant.at(requires_index.reinterpret_as_int()) is Module(requiresName)
     let version = if requires_versions_index != 0 &&
-      constant[requires_versions_index.reinterpret_as_int()]
+      constant.at(requires_versions_index.reinterpret_as_int())
       is Utf8(requiresVersions) {
       Some(requiresVersions)
     } else {
@@ -505,14 +505,14 @@ fn parse_module(
   guard self.read_uint16() is Some(exportsCount)
   let exports = FixedArray::makei(exportsCount.to_int(), _ => {
     guard self.read_bytes(2 * 3)
-      is Some([u2(exports_index), u2(exports_flags), u2(exports_to_count)]) &&
-      constant[exports_index.reinterpret_as_int()] is Package(packageInfo)
+      is Some([u16(exports_index), u16(exports_flags), u16(exports_to_count)]) &&
+      constant.at(exports_index.reinterpret_as_int()) is Package(packageInfo)
     @classfile.ModuleExport::{
       exports: packageInfo,
       exports_flags: exports_flags.reinterpret_as_int().to_uint16(),
       exports_to: FixedArray::makei(exports_to_count.reinterpret_as_int(), _ => {
         guard self.read_uint16() is Some(index) &&
-          constant[index.to_int()] is Module(moduleInfo)
+          constant.at(index.to_int()) is Module(moduleInfo)
         moduleInfo
       }),
     }
@@ -520,11 +520,11 @@ fn parse_module(
   guard self.read_uint16() is Some(opensCount)
   let opens = FixedArray::makei(opensCount.to_int(), _ => {
     guard self.read_bytes(3 * 2)
-      is Some([u2(opens_index), u2(opens_flags), u2(opens_to_count)]) &&
-      constant[opens_index.reinterpret_as_int()] is Package(packageInfo)
+      is Some([u16(opens_index), u16(opens_flags), u16(opens_to_count)]) &&
+      constant.at(opens_index.reinterpret_as_int()) is Package(packageInfo)
     let opensToIndex = FixedArray::makei(opens_to_count.reinterpret_as_int(), _ => {
       guard self.read_uint16() is Some(index) &&
-        constant[index.to_int()] is Module(moduleInfo)
+        constant.at(index.to_int()) is Module(moduleInfo)
       moduleInfo
     })
     @classfile.ModuleOpen::{
@@ -536,19 +536,19 @@ fn parse_module(
   guard self.read_uint16() is Some(useCount)
   let usesIndex = FixedArray::makei(useCount.to_int(), _ => {
     guard self.read_uint16() is Some(index) &&
-      constant[index.to_int()] is Class(classInfo)
+      constant.at(index.to_int()) is Class(classInfo)
     classInfo
   })
   guard self.read_uint16() is Some(providesCount)
   let provides = FixedArray::makei(providesCount.to_int(), _ => {
     guard self.read_bytes(4)
-      is Some([u2(provides_index), u2(provides_with_count)]) &&
-      constant[provides_index.reinterpret_as_int()] is Class(classInfo)
+      is Some([u16(provides_index), u16(provides_with_count)]) &&
+      constant.at(provides_index.reinterpret_as_int()) is Class(classInfo)
     let providesWithIndex = FixedArray::makei(
       provides_with_count.reinterpret_as_int(),
       _ => {
         guard self.read_uint16() is Some(index) &&
-          constant[index.to_int()] is Class(classInfo)
+          constant.at(index.to_int()) is Class(classInfo)
         classInfo
       },
     )
@@ -579,20 +579,20 @@ fn parse_local_variable_table(
     guard self.read_bytes(2 + 2 + 2 + 2 + 2)
       is Some(
         [
-          u2(start_pc),
-          u2(length),
-          u2(name_index),
-          u2(descriptor_index),
-          u2(index),
+          u16(start_pc),
+          u16(length),
+          u16(name_index),
+          u16(descriptor_index),
+          u16(index),
         ]
       ) else {
       raise fail("Unexpected EOF when reading LocalVariableTable attribute")
     }
-    let name_entry = constant[name_index.reinterpret_as_int()]
+    let name_entry = constant.at(name_index.reinterpret_as_int())
     guard name_entry is Utf8(name) else {
       raise fail("Expect constant entry `utf8` but got \{name_entry}")
     }
-    let descriptor_entry = constant[descriptor_index.reinterpret_as_int()]
+    let descriptor_entry = constant.at(descriptor_index.reinterpret_as_int())
     guard descriptor_entry is Utf8(descriptor) else {
       raise fail("Expect constant entry `utf8` but got \{descriptor_entry}")
     }
@@ -617,20 +617,20 @@ fn parse_local_variable_type_table(
     guard self.read_bytes(2 + 2 + 2 + 2 + 2)
       is Some(
         [
-          u2(start_pc),
-          u2(length),
-          u2(name_index),
-          u2(signature_index),
-          u2(index),
+          u16(start_pc),
+          u16(length),
+          u16(name_index),
+          u16(signature_index),
+          u16(index),
         ]
       ) else {
       raise fail("Unexpected EOF when reading LocalVariableTypeTable attribute")
     }
-    let name_entry = constant[name_index.reinterpret_as_int()]
+    let name_entry = constant.at(name_index.reinterpret_as_int())
     guard name_entry is Utf8(name) else {
       raise fail("Expect constant entry `utf8` but got \{name_entry}")
     }
-    let signature_entry = constant[signature_index.reinterpret_as_int()]
+    let signature_entry = constant.at(signature_index.reinterpret_as_int())
     guard signature_entry is Utf8(signature) else {
       raise fail("Expect constant entry `utf8` but got \{signature_entry}")
     }

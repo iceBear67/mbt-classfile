@@ -1,11 +1,11 @@
 fn parse_method_info(self: &@bytebuf.ByteBuf, constant_pool: @classfile.ConstantPool) -> @classfile.MethodInfo raise {
-  guard self.read_bytes(2 * 4) is Some([u2(access_flags), u2(name_index), u2(descriptor_index), u2(attributes_count)]) else {
+  guard self.read_bytes(2 * 4) is Some([u16(access_flags), u16(name_index), u16(descriptor_index), u16(attributes_count)]) else {
     raise fail("Invalid method info.")
   }
-  guard constant_pool[name_index.reinterpret_as_int()] is Utf8(name) else {
+  guard constant_pool.at(name_index.reinterpret_as_int()) is Utf8(name) else {
     raise fail("Invalid method name index.")
   }
-  guard constant_pool[descriptor_index.reinterpret_as_int()] is Utf8(descriptor) else {
+  guard constant_pool.at(descriptor_index.reinterpret_as_int()) is Utf8(descriptor) else {
     raise fail("Invalid method descriptor index.")
   }
   @classfile.MethodInfo::{
@@ -17,8 +17,8 @@ fn parse_method_info(self: &@bytebuf.ByteBuf, constant_pool: @classfile.Constant
 }
 
 fn parse_field_info(self: &@bytebuf.ByteBuf, constant_pool: @classfile.ConstantPool) -> @classfile.FieldInfo raise {
-  guard self.read_bytes(2*4) is Some([u2(access_flags), u2(name_index), u2(descriptor_index), u2(attributes_count)]) && 
-  constant_pool[name_index.reinterpret_as_int()] is @classfile.Utf8(fieldName) && constant_pool[descriptor_index.reinterpret_as_int()] is @classfile.Utf8(descriptor)
+  guard self.read_bytes(2*4) is Some([u16(access_flags), u16(name_index), u16(descriptor_index), u16(attributes_count)]) && 
+  constant_pool.at(name_index.reinterpret_as_int()) is @classfile.Utf8(fieldName) && constant_pool.at(descriptor_index.reinterpret_as_int()) is @classfile.Utf8(descriptor)
 
   let attributes = FixedArray::makei(attributes_count.reinterpret_as_int(), _ => {
     self.parse_attribute_info(constant_pool)
