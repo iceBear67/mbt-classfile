@@ -7,7 +7,7 @@ Based on [JVMS Ch.4](https://docs.oracle.com/javase/specs/jvms/se24/html/jvms-4.
 
 # Goals
  - [x] Parse ClassFile
- - [ ] Descriptor parser
+ - [x] Descriptor parser
  - [ ] Signature parser
  - [ ] Write ClassFile
  - [ ] Bytecode \[Dis\]Assembler
@@ -104,15 +104,15 @@ Fields:
   final Ljava/lang/String; finalStr;
 
 Methods:
-  public methodPublicVoid
+  public void methodPublicVoid()
     descriptor: ()V
     attributes:
       Code({max_stack: 0, max_locals: 1, code: b"\xb1", exception_table: [], attributes: [LineNumberTable({line_number_table: [{start_pc: 0, line_number: 19}]})]})
-  private methodPrivateString
+  private String methodPrivateString()
     descriptor: ()Ljava/lang/String;
     attributes:
       Code({max_stack: 1, max_locals: 1, code: b"\x01\xb0", exception_table: [], attributes: [LineNumberTable({line_number_table: [{start_pc: 0, line_number: 21}]})]})
-  public <init>
+  public void <init>()
     descriptor: ()V
     attributes:
       Code({max_stack: 2, max_locals: 1, code: b"\x2a\xb7\x00\x01\x2a\x12\x07\xb5\x00\x09\xb1", exception_table: [], attributes: [LineNumberTable({line_number_table: [{start_pc: 0, line_number: 23}, {start_pc: 4, line_number: 17}, {start_pc: 10, line_number: 24}]})]})

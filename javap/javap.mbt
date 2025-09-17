@@ -62,12 +62,25 @@ pub fn fmt(_self : @classfile.ClassFile) -> String {
   }
   sb.write_string("Fields:\n")
   for field in _self.fields {
-    sb.write_string("  \{@classfile.to_modifier_string(field.access_flags)} \{field.descriptor} \{field.name};\n")
+    sb.write_string(
+      "  \{@classfile.to_modifier_string(field.access_flags)} \{field.descriptor} \{field.name};\n",
+    )
     sb.write_string("\n")
   }
   sb.write_string("Methods:\n")
   for method in _self.methods {
-    sb.write_string("  \{@classfile.to_modifier_string(method.access_flags)} \{method.name}\n")
+    let methodType = (try? @parser.parse_descriptor_method(method.descriptor)).to_option()
+    let returnName = methodType
+      .map(it => it.return_type.to_simple_name())
+      .unwrap_or("??")
+    let parameters = methodType
+      .map(it => it.parameters)
+      .unwrap_or([])
+      .map(it => it.to_simple_name())
+      .join(", ")
+    sb.write_string(
+      "  \{@classfile.to_modifier_string(method.access_flags)} \{returnName} \{method.name}(\{parameters})\n",
+    )
     sb.write_string("    descriptor: \{method.descriptor}\n")
     sb.write_string("    attributes:\n")
     for attr in method.attributes {
