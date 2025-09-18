@@ -1,3 +1,5 @@
+import java.util.function.Consumer;
+
 public class Simple<G> {
 	// access modifiers
 	private String _pri;
@@ -16,9 +18,11 @@ public class Simple<G> {
 
 	final String finalStr = "";
 
-	public void methodPublicVoid(){}
 
-	private String methodPrivateString(){ return null; }
+	public <T extends CharSequence> void methodPublicVoid(T g){}
+	private G methodPrivateString(){ return null; }
+	public <T, OtherParam> void justGeneric(T t){}
+	public void wildcard(Class<? extends CharSequence> clazz){}
 
 	public Simple(){ // constructor
 	}

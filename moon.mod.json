@@ -2,7 +2,7 @@
   "name": "iceBear67/classfile",
   "version": "0.1.0",
   "deps": {
-    "iceBear67/bytebuf": "0.1.0",
+    "iceBear67/bytebuf": "0.2.0",
     "moonbitlang/x": "0.4.34",
     "TheWaWaR/clap": "0.2.5"
   },

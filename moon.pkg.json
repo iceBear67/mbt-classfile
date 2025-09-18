@@ -3,5 +3,8 @@
       "moonbitlang/x/fs",
       "iceBear67/bytebuf",
       "iceBear67/classfile/parser"
+    ],
+    "import": [
+      "iceBear67/bytebuf"
     ]
 }
