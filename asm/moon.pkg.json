@@ -1,1 +1,6 @@
-{}
+{
+  "import": [
+    "iceBear67/bytebuf",
+    "iceBear67/classfile"
+  ]
+}

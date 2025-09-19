@@ -31,6 +31,125 @@ pub(all) enum ConstantType {
   Package(ConstantPackageInfo)
 } derive(Show, Eq)
 
+pub fn class_info(self: ConstantType) -> ConstantClassInfo? {
+  if self is Class(clasInfo) {
+    return Some(clasInfo)
+  }
+  None
+}
+
+pub fn field_ref_info(self: ConstantType) -> ConstantFieldRefInfo? {
+  if self is FieldRef(info) {
+    return Some(info)
+  }
+  None
+}
+
+pub fn method_ref_info(self: ConstantType) -> ConstantMethodRefInfo? {
+  if self is MethodRef(info) {
+    return Some(info)
+  }
+  None
+}
+
+pub fn interface_method_ref_info(self: ConstantType) -> ConstantInterfaceMethodRefInfo? {
+  if self is InterfaceMethodRef(info) {
+    return Some(info)
+  }
+  None
+}
+
+pub fn string_info(self: ConstantType) -> ConstantStringInfo? {
+  if self is String(info) {
+    return Some(info)
+  }
+  None
+}
+
+pub fn integer_info(self: ConstantType) -> ConstantIntegerInfo? {
+  if self is Integer(info) {
+    return Some(info)
+  }
+  None
+}
+
+pub fn float_info(self: ConstantType) -> ConstantFloatInfo? {
+  if self is Float(info) {
+    return Some(info)
+  }
+  None
+}
+
+pub fn long_info(self: ConstantType) -> ConstantLongInfo? {
+  if self is Long(info) {
+    return Some(info)
+  }
+  None
+}
+
+pub fn double_info(self: ConstantType) -> ConstantDoubleInfo? {
+  if self is Double(info) {
+    return Some(info)
+  }
+  None
+}
+
+pub fn name_and_type_info(self: ConstantType) -> ConstantNameAndTypeInfo? {
+  if self is NameAndType(info) {
+    return Some(info)
+  }
+  None
+}
+
+pub fn utf8_info(self: ConstantType) -> String? {
+  if self is Utf8(info) {
+    return Some(info)
+  }
+  None
+}
+
+pub fn method_handle_info(self: ConstantType) -> ConstantMethodHandleInfo? {
+  if self is MethodHandle(info) {
+    return Some(info)
+  }
+  None
+}
+
+pub fn method_type_info(self: ConstantType) -> ConstantMethodTypeInfo? {
+  if self is MethodType(info) {
+    return Some(info)
+  }
+  None
+}
+
+pub fn dynamic_info(self: ConstantType) -> ConstantDynamicInfo? {
+  if self is Dynamic(info) {
+    return Some(info)
+  }
+  None
+}
+
+pub fn invoke_dynamic_info(self: ConstantType) -> ConstantInvokeDynamicInfo? {
+  if self is InvokeDynamic(info) {
+    return Some(info)
+  }
+  None
+}
+
+pub fn module_info(self: ConstantType) -> ConstantModuleInfo? {
+  if self is Module(info) {
+    return Some(info)
+  }
+  None
+}
+
+pub fn package_info(self: ConstantType) -> ConstantPackageInfo? {
+  if self is Package(info) {
+    return Some(info)
+  }
+  None
+}
+
 ///|
 pub(all) struct ConstantClassInfo {
   name_index : UInt
