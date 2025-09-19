@@ -52,6 +52,6 @@ test "type variable" {
   assert_eq(result.type_parameters.length(), 2)
   assert_eq(result.parameters.length(), 1)
   let expect =
-    #|{type_arguments: [TypeArg({identifier: "T", indicator: Extends, class_bound: ClassType({class_internal_name: "java/lang/Object", type_arguments: [], outer_class: None}), interface_bound: []}), TypeArg({identifier: "T", indicator: Extends, class_bound: TypeVar("O"), interface_bound: []})], parameters: [RefType(TypeVar("T"))], throws: [], result: None}
+    #|{type_parameters: [{identifier: "T", class_bound: ClassType({class_internal_name: "java/lang/Object", type_arguments: [], outer_class: None}), interface_bound: []}, {identifier: "T", class_bound: TypeVar("O"), interface_bound: []}], parameters: [RefType(TypeVar("T"))], throws: [], result: None}
   inspect(result, content=expect)
 }
