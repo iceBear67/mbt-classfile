@@ -1,56 +1,94 @@
 ///|
+/// class, field, method
 const ACC_PUBLIC : UInt16 = 0x0001
 
 ///|
+/// class, field, method
 const ACC_PRIVATE : UInt16 = 0x0002
 
 ///|
+/// class, field, method
 const ACC_PROTECTED : UInt16 = 0x0004
 
 ///|
+/// field, method
 const ACC_STATIC : UInt16 = 0x0008
 
 ///|
+/// class, field, method, parameter
 const ACC_FINAL : UInt16 = 0x0010
 
 ///|
+/// field
 const ACC_VOLATILE : UInt16 = 0x0040
 
 ///|
+/// field
 const ACC_TRANSIENT : UInt16 = 0x0080
 
 ///|
+///  class
 const ACC_SUPER : UInt16 = 0x0020
 
 ///|
+/// class
 const ACC_INTERFACE : UInt16 = 0X0200
 
 ///|
+/// class, method
 const ACC_ABSTRACT : UInt16 = 0x0400
 
 ///|
+/// class, field, method, parameter, module *
 const ACC_SYNTHETIC : UInt16 = 0x1000
 
 ///|
+/// class
 const ACC_ANNOTATION : UInt16 = 0x2000
 
 ///|
+/// class(?) field inner
 const ACC_ENUM : UInt16 = 0x4000
 
 ///|
+/// class
 const ACC_MODULE : UInt16 = 0x8000
 
 ///|
+/// method
 const ACC_SYNCHRONIZED : UInt16 = 0x0020
 
 ///|
+/// method
 const ACC_BRIDGE : UInt16 = 0x0040
 
 ///|
+/// method
 const ACC_VARARGS : UInt16 = 0x0080
 
 ///|
+/// method
 const ACC_NATIVE : UInt16 = 0x0100
+
+///|
+/// module
+const ACC_OPEN : UInt16 = 0x0020
+
+///|
+/// module requires
+const ACC_TRANSITIVE : UInt16 = 0x0020
+
+///|
+/// module requires
+const ACC_STATIC_PHASE : UInt16 = 0x0040
+
+///|
+///  field, method, parameter, module, module *
+const ACC_MANDATED : UInt16 = 0x8000
+
+///|
+/// method
+const ACC_STRICT : UInt16 = 0x8000
 
 ///|
 pub enum Modifier {
@@ -72,7 +110,12 @@ pub enum Modifier {
   Bridge
   Varargs
   Native
-} derive (Show, Eq)
+  Open
+  Transitive
+  StaticPhase
+  Mandated
+  Strict
+} derive(Show, Eq)
 
 ///|
 pub typealias Array[Modifier] as Modifiers
@@ -98,18 +141,25 @@ pub fn to_bits(self : Modifier) -> UInt16 {
     Private => ACC_PRIVATE
     Public => ACC_PUBLIC
     Native => ACC_NATIVE
+    Open => ACC_OPEN
+    Transitive => ACC_TRANSITIVE
+    StaticPhase => ACC_STATIC_PHASE
+    Mandated => ACC_MANDATED
+    Strict => ACC_STRICT
   }
 }
 
-pub fn to_access_bits(_self: Modifiers) -> UInt16{
-  let mut result: UInt16 = 0;
+///|
+pub fn to_access_bits(_self : Modifiers) -> UInt16 {
+  let mut result : UInt16 = 0
   for m in _self {
     result = result | m.to_bits()
   }
   result
 }
 
-pub fn to_string(self: Modifier) -> String {
+///|
+pub fn to_string(self : Modifier) -> String {
   match self {
     Public => "public"
     Private => "private"
@@ -129,13 +179,15 @@ pub fn to_string(self: Modifier) -> String {
     Bridge => "bridge"
     Varargs => "varargs"
     Native => "native"
+    _ => panic() //todo support module acc
   }
 }
 
-pub fn to_modifier_string(_self: Modifiers) -> String{
+///|
+pub fn to_modifier_string(_self : Modifiers) -> String {
   let mut result = ""
   // Define priority order (higher number = higher priority)
-  fn get_priority(m: Modifier) -> Int {
+  fn get_priority(m : Modifier) -> Int {
     match m {
       Public => 9
       Protected => 8
@@ -149,10 +201,10 @@ pub fn to_modifier_string(_self: Modifiers) -> String{
       _ => 1
     }
   }
-  
+
   // Sort modifiers by priority
   _self.sort_by(fn(a, b) { get_priority(b) - get_priority(a) })
-  
+
   // Build string
   for m in _self {
     if result != "" {
@@ -196,6 +248,7 @@ pub fn to_class_modifiers(permBit : UInt16) -> Modifiers {
   array
 }
 
+///|
 pub fn to_field_modifiers(permBit : UInt16) -> Modifiers {
   let array : Array[Modifier] = Array::make(0, Modifier::Bridge)
   if (permBit & ACC_PUBLIC) != 0 {
@@ -225,6 +278,7 @@ pub fn to_field_modifiers(permBit : UInt16) -> Modifiers {
   array
 }
 
+///|
 pub fn to_method_modifiers(permBit : UInt16) -> Modifiers {
   let array : Array[Modifier] = Array::make(0, Modifier::Bridge)
   if (permBit & ACC_PUBLIC) != 0 {

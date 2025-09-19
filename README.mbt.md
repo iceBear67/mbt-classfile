@@ -1,6 +1,7 @@
 # mbt-classfile
 
-ClassFile parsing/writing support in Moonbit.
+ClassFile parsing/writing support in Moonbit.   
+_This library is not stable yet. APIs may change frequently and bugs are likely to appear._
 
 Based on [JVMS Ch.4](https://docs.oracle.com/javase/specs/jvms/se24/html/jvms-4.html#jvms-4.5), version Java SE 24.
 
@@ -8,7 +9,7 @@ Based on [JVMS Ch.4](https://docs.oracle.com/javase/specs/jvms/se24/html/jvms-4.
 # Goals
  - [x] Parse ClassFile
  - [x] Descriptor parser
- - [ ] Signature parser
+ - [x] Signature parser
  - [ ] Write ClassFile
  - [ ] Bytecode \[Dis\]Assembler
 
