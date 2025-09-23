@@ -159,7 +159,7 @@ pub fn to_access_bits(_self : Modifiers) -> UInt16 {
 }
 
 ///|
-pub fn to_string(self : Modifier) -> String {
+pub fn modifier_to_string(self : Modifier) -> String {
   match self {
     Public => "public"
     Private => "private"
@@ -210,7 +210,7 @@ pub fn to_modifier_string(_self : Modifiers) -> String {
     if result != "" {
       result = result + " "
     }
-    result = result + m.to_string()
+    result = result + m.modifier_to_string()
   }
   result
 }

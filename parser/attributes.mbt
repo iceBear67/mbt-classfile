@@ -9,7 +9,7 @@ fn parse_attribute_info(
   }
   guard constant.at(attribute_name_index.reinterpret_as_int()) is Utf8(name) else {
     raise fail(
-      "Expect UTF8 when reading attribute name but got \{constant.at(attribute_name_index.reinterpret_as_int())}",
+      "Expect UTF8 when reading attribute name but got \{constant.at(attribute_name_index.reinterpret_as_int()).to_string()}",
     )
   }
   match name {
@@ -248,7 +248,7 @@ fn parse_attribute_source_file(
   }
   let entry = constant.at(index.to_int())
   guard entry is Utf8(sourceFile) else {
-    raise fail("Expect constant entry `utf8` but got \{entry}")
+    raise fail("Expect constant entry `utf8` but got \{entry.to_string()}")
   }
   return SourceFile(@classfile.SourceFileAttribute::{ sourceFile, })
 }
@@ -263,7 +263,7 @@ fn parse_attribute_signature(
   }
   let entry = constant.at(index.to_int())
   guard entry is Utf8(signature) else {
-    raise fail("Expect constant entry `utf8` but got \{entry}")
+    raise fail("Expect constant entry `utf8` but got \{entry.to_string()}")
   }
   return Signature(@classfile.SignatureAttribute::{ signature, })
 }
@@ -305,7 +305,7 @@ fn parse_attribute_exceptions(
     }
     let entry = constant.at(index.to_int())
     guard entry is Class(classInfo) else {
-      raise fail("Expect constant entry `class info` but got \{entry}")
+      raise fail("Expect constant entry `class info` but got \{entry.to_string()}")
     }
     classInfo
   })
@@ -322,14 +322,14 @@ fn parse_attribute_enclosing_method(
   }
   let class_entry = constant.at(class_index.reinterpret_as_int())
   guard class_entry is Class(classInfo) else {
-    raise fail("Expect constant entry `class info` but got \{class_entry}")
+    raise fail("Expect constant entry `class info` but got \{class_entry.to_string()}")
   }
   let mut methodInfo : @classfile.ConstantNameAndTypeInfo? = None
   if method_index != 0 {
     let method_entry = constant.at(method_index.reinterpret_as_int())
     guard method_entry is NameAndType(mnt) else {
       raise fail(
-        "Expect constant entry `name and type info` but got \{method_entry}",
+        "Expect constant entry `name and type info` but got \{method_entry.to_string()}",
       )
     }
     methodInfo = Some(mnt)
@@ -389,7 +389,7 @@ fn parse_attribute_inner_classes(
     )
     guard inner_class_entry is Class(inner_class) else {
       raise fail(
-        "Expect constant entry `class info` but got \{inner_class_entry}",
+        "Expect constant entry `class info` but got \{inner_class_entry.to_string()}",
       )
     }
     let mut outer_class : @classfile.ConstantClassInfo? = None
@@ -399,14 +399,14 @@ fn parse_attribute_inner_classes(
       )
       guard outer_class_entry is Class(oc) else {
         raise fail(
-          "Expect constant entry `class info` but got \{outer_class_entry}",
+          "Expect constant entry `class info` but got \{outer_class_entry.to_string()}",
         )
       }
       outer_class = Some(oc)
     }
     guard constant.at(inner_name_index.reinterpret_as_int()) is Utf8(inner_name) else {
       raise fail(
-        "Expect constant entry `utf8` but got \{constant.at(inner_name_index.reinterpret_as_int())}",
+        "Expect constant entry `utf8` but got \{constant.at(inner_name_index.reinterpret_as_int()).to_string()}",
       )
     }
     @classfile.InnerClassInfo::{
@@ -435,7 +435,7 @@ fn parse_bootstrap_methods(
       }
       let bsMethodRef = constant.at(bootstrapMethodRef.reinterpret_as_int())
       guard bsMethodRef is MethodHandle(refMH) else {
-        raise fail("Expect method handle but got \{bsMethodRef}")
+        raise fail("Expect method handle but got \{bsMethodRef.to_string()}")
       }
       let bootstrap_arguments = FixedArray::makei(
         numBootstrapArguments.reinterpret_as_int(),
@@ -465,7 +465,7 @@ fn parse_exception_table(
   if catch_type != 0 {
     let entry = constant.at(catch_type.reinterpret_as_int())
     guard entry is Class(ci) else {
-      raise fail("Expect constant entry `class info` but got \{entry}")
+      raise fail("Expect constant entry `class info` but got \{entry.to_string()}")
     }
     classInfo = Some(ci)
   }
@@ -599,11 +599,11 @@ fn parse_local_variable_table(
     }
     let name_entry = constant.at(name_index.reinterpret_as_int())
     guard name_entry is Utf8(name) else {
-      raise fail("Expect constant entry `utf8` but got \{name_entry}")
+      raise fail("Expect constant entry `utf8` but got \{name_entry.to_string()}")
     }
     let descriptor_entry = constant.at(descriptor_index.reinterpret_as_int())
     guard descriptor_entry is Utf8(descriptor) else {
-      raise fail("Expect constant entry `utf8` but got \{descriptor_entry}")
+      raise fail("Expect constant entry `utf8` but got \{descriptor_entry.to_string()}")
     }
     @classfile.LocalVariableTableEntry::{
       start_pc: start_pc.reinterpret_as_int().to_uint16(),
@@ -637,11 +637,11 @@ fn parse_local_variable_type_table(
     }
     let name_entry = constant.at(name_index.reinterpret_as_int())
     guard name_entry is Utf8(name) else {
-      raise fail("Expect constant entry `utf8` but got \{name_entry}")
+      raise fail("Expect constant entry `utf8` but got \{name_entry.to_string()}")
     }
     let signature_entry = constant.at(signature_index.reinterpret_as_int())
     guard signature_entry is Utf8(signature) else {
-      raise fail("Expect constant entry `utf8` but got \{signature_entry}")
+      raise fail("Expect constant entry `utf8` but got \{signature_entry.to_string()}")
     }
     @classfile.LocalVariableTypeTableEntry::{
       start_pc: start_pc.reinterpret_as_int().to_uint16(),

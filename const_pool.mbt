@@ -29,7 +29,54 @@ pub(all) enum ConstantType {
   InvokeDynamic(ConstantInvokeDynamicInfo)
   Module(ConstantModuleInfo)
   Package(ConstantPackageInfo)
-} derive(Show)
+}
+
+pub fn to_string(self: ConstantType) -> String {
+  let sb = StringBuilder::new()
+  self.output(sb)
+  sb.to_string()
+}
+
+// There's a back reference to the table so using derive Show will just blow up the stack..
+impl Show for ConstantType with output(self, logger) {
+  let r = match self {
+    ConstantType::Class(info) => "Class \{info.name()}"
+    ConstantType::FieldRef(info) => {
+      let class = info.field_class_info().unwrap()
+      let nat = info.name_and_type().unwrap()
+      "FieldRef(class=\{class.name()}, name=\{nat.get_name().unwrap()}, type=\{nat.descriptor().unwrap()})"
+    }
+    ConstantType::MethodRef(info) => {
+      let class = info.method_class_info().unwrap()
+      let nat = info.method_name_and_type().unwrap()
+      "MethodRef(class=\{class.name()}, name=\{nat.get_name().unwrap()}, type=\{nat.descriptor().unwrap()})"
+    }
+    ConstantType::InterfaceMethodRef(info) => {
+      let class = info.interface_class_info().unwrap()
+      let nat = info.interface_name_and_type().unwrap()
+      "InterfaceMethodRef(class=\{class.name()}, name=\{nat.get_name().unwrap()}, type=\{nat.descriptor().unwrap()})"
+    }
+    ConstantType::String(info) => "String(\{info.string().unwrap()})"
+    ConstantType::Integer(info) => "Integer(\{info.bytes})"
+    ConstantType::Float(info) => "Float(\{info.bytes})"
+    ConstantType::Long(info) => "Long(\{info.value})"
+    ConstantType::Double(info) => "Double(\{info.value})"
+    ConstantType::NameAndType(info) => 
+      "NameAndType(name=\{info.get_name().unwrap()}, type=\{info.descriptor().unwrap()})"
+    ConstantType::Utf8(s) => "Utf8(\{s})"
+    ConstantType::MethodHandle(info) =>
+      "MethodHandle(reference_kind=\{info.reference_kind}, reference_index=\{info.reference_index})"
+    ConstantType::MethodType(info) => 
+      "MethodType(descriptor=\{info.get_descriptor().unwrap()})"
+    ConstantType::Dynamic(info) =>
+      "Dynamic(bootstrap_method_attr_index=\{info.bootstrap_method_attr_index}, name_and_type_index=\{info.name_and_type_index})"
+    ConstantType::InvokeDynamic(info) =>
+      "InvokeDynamic(bootstrap_method_attr_index=\{info.bootstrap_method_attr_index}, name_and_type_index=\{info.name_and_type_index})"
+    ConstantType::Module(info) => "Module(\{info.module_name().unwrap()})"
+    ConstantType::Package(info) => "Package(\{info.package_name().unwrap()})"
+  }
+  logger.write_string(r)
+}
 
 ///|
 pub fn class_info(self : ConstantType) -> ConstantClassInfo? {

@@ -17,12 +17,11 @@ fn main {
       return
     }
   }
-  println(fmt(parsed_class))
+  print(parsed_class)
 }
 
 ///|
-pub fn fmt(_self : @classfile.ClassFile) -> String {
-  let sb = StringBuilder::new()
+pub fn print(_self : @classfile.ClassFile) -> Unit {
   let srf = _self.attributes.iter().find_first(it => it is SourceFile(_))
   let header =
     #|Compiled from %compiled_from
@@ -55,19 +54,18 @@ pub fn fmt(_self : @classfile.ClassFile) -> String {
       old="%attributes_number",
       new=_self.attributes.length().to_string(),
     )
-  sb.write_string(header)
-  sb.write_string("\nConstant pool:\n")
+  println(header)
+  println("\nConstant pool:")
   for i, entry in _self.constant_pool.internal_arr {
-    sb.write_string("  #\{i} = \{entry}\n")
+    println("  #\{i} = \{entry.to_string()}")
   }
-  sb.write_string("Fields:\n")
+  println("Fields:")
   for field in _self.fields {
-    sb.write_string(
-      "  \{@classfile.to_modifier_string(field.access_flags)} \{field.descriptor} \{field.name};\n",
+    println(
+      "  \{@classfile.to_modifier_string(field.access_flags)} \{field.descriptor} \{field.name};",
     )
-    sb.write_string("\n")
   }
-  sb.write_string("Methods:\n")
+  println("Methods:")
   for method in _self.methods {
     let methodType = (try? @parser.parse_descriptor_method(method.descriptor)).to_option()
     let returnName = methodType
@@ -78,14 +76,30 @@ pub fn fmt(_self : @classfile.ClassFile) -> String {
       .unwrap_or([])
       .map(it => it.to_simple_name())
       .join(", ")
-    sb.write_string(
-      "  \{@classfile.to_modifier_string(method.access_flags)} \{returnName} \{method.name}(\{parameters})\n",
+    println(
+      "  \{@classfile.to_modifier_string(method.access_flags)} \{returnName} \{method.name}(\{parameters})",
     )
-    sb.write_string("    descriptor: \{method.descriptor}\n")
-    sb.write_string("    attributes:\n")
+    println("    descriptor: \{method.descriptor}\n")
+    println("    attributes:")
     for attr in method.attributes {
-      sb.write_string("      \{attr}\n")
+      if attr is Code(code_attr) {
+        println("      Code: max_stack=\{code_attr.max_stack}, max_locals=\{code_attr.max_locals}, code_length=\{code_attr.code.length()}",)
+        let code = code_attr.code
+        let insns = @asm.disassemble(
+          @bytebuf.make_unpooled_from_bytes(code),
+          _self,
+        ) catch {
+          err => {
+            println("        Cannot disassemble code: \{err}")
+            continue
+          }
+        }
+        for insn in insns {
+          println("        \{insn.to_string()}")
+        }
+      } else {
+        println("      \{attr}")
+      }
     }
   }
-  sb.to_string()
 }

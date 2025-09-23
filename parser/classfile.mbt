@@ -28,7 +28,7 @@ pub fn parse_class(view : &@bytebuf.ByteBuf) -> @classfile.ClassFile raise {
   guard _thisClass is @classfile.Class(thisClassC) &&
     constant_pool.at(thisClassC.name_index.reinterpret_as_int())
     is Utf8(thisClass) else {
-    raise fail("Unexpected thisClass type: \{_thisClass}")
+    raise fail("Unexpected thisClass type: \{_thisClass.to_string()}")
   }
   let mut superClass : String? = None
   if superClassIdx != 0 {
@@ -116,11 +116,13 @@ fn parse_constant_pool(
   let parent : Ref[@classfile.ConstantPool] = Ref::new(@classfile.ConstantPool::{
     internal_arr: FixedArray::makei(0, _ => panic()),
   }) // dummp ref
-  @classfile.ConstantPool::{
+  let r = @classfile.ConstantPool::{
     internal_arr: FixedArray::makei(count.to_int() - 1, _ => self.parse_constant_entry(
       parent,
     )),
   }
+  parent.val = r
+  r
 }
 
 ///|

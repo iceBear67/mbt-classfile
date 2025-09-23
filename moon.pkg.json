@@ -1,7 +1,8 @@
 {
     "test-import": [
       "moonbitlang/x/fs",
-      "iceBear67/classfile/parser"
+      "iceBear67/classfile/parser",
+      "iceBear67/classfile/javap"
     ],
     "import": [
       "iceBear67/bytebuf"

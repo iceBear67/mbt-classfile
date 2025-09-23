@@ -90,7 +90,7 @@ fn parse_verification_type(
       }
       let entry = constant.at(cpool_index.to_int())
       guard entry is Class(classInfo) else {
-        raise fail("Expect constant entry `class info` but got \{entry}")
+        raise fail("Expect constant entry `class info` but got \{entry.to_string()}")
       }
       Object(classInfo)
     }

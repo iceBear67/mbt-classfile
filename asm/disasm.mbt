@@ -255,7 +255,7 @@ fn resolve_control_flow(self : Disassembler) -> Unit {
   for i = 0; i < offsets.length(); i = i + 1 {
     let offset = offsets[i]
     guard jmp.get(offset) is Some((opcode, label)) else { continue }
-    self.found.insert(i + insertedInsns, ControlFlowInsn(opcode, Some(label)))
+    self.found.insert(i + insertedInsns, LabelInsn(label))
     insertedInsns = insertedInsns + 1
   }
 }

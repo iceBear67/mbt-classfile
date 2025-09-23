@@ -8,7 +8,7 @@ fn parse_annotation(
   }
   let type_entry = constant.at(type_index.to_int())
   guard type_entry is Utf8(type_descriptor) else {
-    raise fail("Expect constant entry `utf8` but got \{type_entry}")
+    raise fail("Expect constant entry `utf8` but got \{type_entry.to_string()}")
   }
   guard self.read_uint16() is Some(num_element_value_pairs) else {
     raise fail("Unexpected EOF when reading annotation.")
@@ -21,7 +21,7 @@ fn parse_annotation(
       }
       let name_entry = constant.at(element_name_index.to_int())
       guard name_entry is Utf8(name) else {
-        raise fail("Expect constant entry `utf8` but got \{name_entry}")
+        raise fail("Expect constant entry `utf8` but got \{name_entry.to_string()}")
       }
       @classfile.ElementValuePair::{
         element_name: name,
@@ -55,11 +55,11 @@ fn parse_element_value(
       }
       let type_name_entry = constant.at(type_name_index.reinterpret_as_int())
       guard type_name_entry is Utf8(type_name) else {
-        raise fail("Expect constant entry `utf8` but got \{type_name_entry}")
+        raise fail("Expect constant entry `utf8` but got \{type_name_entry.to_string()}")
       }
       let const_name_entry = constant.at(const_name_index.reinterpret_as_int())
       guard const_name_entry is Utf8(const_name) else {
-        raise fail("Expect constant entry `utf8` but got \{const_name_entry}")
+        raise fail("Expect constant entry `utf8` but got \{const_name_entry.to_string()}")
       }
       @classfile.ElementValue::EnumConst(@classfile.ElementEnumConstant::{
         type_name,
@@ -72,7 +72,7 @@ fn parse_element_value(
       }
       let class_info_entry = constant.at(class_info_index.to_int())
       guard class_info_entry is Utf8(class_info) else {
-        raise fail("Expect constant entry `utf8` but got \{class_info_entry}")
+        raise fail("Expect constant entry `utf8` but got \{class_info_entry.to_string()}")
       }
       @classfile.ElementValue::ClassInfo(class_info)
     }
@@ -110,7 +110,7 @@ fn parse_type_annotation(
   }
   let descriptor = constant.at(typeIndex.reinterpret_as_int())
   guard descriptor is Utf8(typeDescriptor) else {
-    return fail("Expect utf8 but got \{descriptor}")
+    return fail("Expect utf8 but got \{descriptor.to_string()}")
   }
   let elementPairs = FixedArray::makei(
     numElementValuePairs.reinterpret_as_int(),
