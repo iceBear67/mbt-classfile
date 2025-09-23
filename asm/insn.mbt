@@ -17,6 +17,23 @@ pub(all) enum ArrayType {
   Reference(String)
 }
 
+pub(all) enum BranchLookup {
+  Table(TableSwitch)
+  Lookup(LookupSwitch)
+}
+
+pub(all) struct TableSwitch {
+  default_label : Label
+  low : Int
+  high : Int
+  labels : FixedArray[Label] // len: high - low + 1
+}
+
+pub(all) struct LookupSwitch {
+  default_label : Label
+  match_offset_pairs : FixedArray[(Int, Label)] // len: npairs
+}
+
 ///|
 pub(all) enum Invocation {
   Dynamic(@classfile.ConstantInvokeDynamicInfo)
@@ -47,7 +64,7 @@ pub(all) enum Instruction {
   // var index.
   // RET and JSR has been deprecated for a long time. When writing bytecodes, do not use them.
   RetInsn(UInt)
-
+  SwitchInsn(BranchLookup)
   // opcode, descriptor
   InvocationInsn(Opcode, Invocation) // invokevirtual, invokeinterface
   Insn(Opcode) // insns that have no operands. d2i i2d

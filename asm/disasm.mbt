@@ -3,7 +3,7 @@
 // (Refer to the descriptions of those instructions for more information on the consequences of code array alignment.)
 
 ///|
-pub struct Disassembler {
+priv struct Disassembler {
   code : &@bytebuf.ByteBuf
   class : @classfile.ClassFile
   found : Array[Instruction]
@@ -12,21 +12,24 @@ pub struct Disassembler {
 }
 
 ///|
-pub fn new_disassembler(
+pub fn disassemble(
   code : &@bytebuf.ByteBuf,
   class : @classfile.ClassFile,
-) -> Disassembler {
-  Disassembler::{
+) -> Array[Instruction] raise {
+  let disasm = Disassembler::{
     code,
     class,
     found: Array::makei(0, _ => panic()),
     jump_table: {},
     offsets: Array::makei(0, _ => panic()),
   }
+  disasm.parse_code()
+  disasm.resolve_control_flow()
+  disasm.found
 }
 
 ///|
-pub fn parse_code(self : Disassembler) -> Array[Instruction] raise {
+fn parse_code(self : Disassembler) -> Unit raise {
   let constant = self.class.constant_pool
   let code = self.code
   let offsets = self.offsets
@@ -238,14 +241,23 @@ pub fn parse_code(self : Disassembler) -> Array[Instruction] raise {
       WIDE => parse_wide(code)
       RETURN => ControlFlowInsn(insn, None)
       RET => RetInsn(code.read_byte().map(it => it.to_uint()).unwrap())
-      c => {
-        self.parse_flow_insn(c)
-        continue
-      }
+      c => self.parse_flow_insn(c)
     }
     self.found.push(insn)
   }
-  self.found
+}
+
+///|
+fn resolve_control_flow(self : Disassembler) -> Unit {
+  let jmp = self.jump_table
+  let offsets = self.offsets
+  let mut insertedInsns = 0
+  for i = 0; i < offsets.length(); i = i + 1 {
+    let offset = offsets[i]
+    guard jmp.get(offset) is Some((opcode, label)) else { continue }
+    self.found.insert(i + insertedInsns, ControlFlowInsn(opcode, Some(label)))
+    insertedInsns = insertedInsns + 1
+  }
 }
 
 ///|
@@ -254,7 +266,7 @@ fn assign_new_label(self : Disassembler) -> Label {
 }
 
 ///|
-fn parse_flow_insn(self : Disassembler, insn : Int) -> Unit {
+fn parse_flow_insn(self : Disassembler, insn : Int) -> Instruction {
   fn read_offset() -> Int {
     self.code.read_int16().map(it => it.to_int()).unwrap() +
     self.code.position()
@@ -282,30 +294,57 @@ fn parse_flow_insn(self : Disassembler, insn : Int) -> Unit {
     | IFLE
     | IFNONNULL
     | IFNULL
-    | JSR => self.jump_table[read_offset()] = (insn, self.assign_new_label())
-    GOTO_W | JSR_W =>
-      self.jump_table[read_offset_32()] = (insn, self.assign_new_label())
+    | JSR => {
+      let label = self.assign_new_label()
+      self.jump_table[read_offset()] = (insn, label)
+      ControlFlowInsn(insn, Some(label))
+    }
+    GOTO_W | JSR_W => {
+      let label = self.assign_new_label()
+      self.jump_table[read_offset_32()] = (insn, label)
+      ControlFlowInsn(insn, Some(label))
+    }
     TABLESWITCH => {
       guard self.code.read_bytes(3) is Some([0, 0, 0])  // JVMS requirement
       let default = read_offset_32()
-      self.jump_table[default] = (insn, self.assign_new_label())
+      let defaultLabel = self.assign_new_label()
+      self.jump_table[default] = (insn, defaultLabel)
       let low = self.code.read_int().unwrap()
       let high = self.code.read_int().unwrap()
-      for i in low..=high {
+      let labels : Array[Label] = Array::makei(high - low + 1, _ => {
+        let label = self.assign_new_label()
         let offset = read_offset_32()
-        self.jump_table[offset] = (insn, self.assign_new_label())
-      }
+        self.jump_table[offset] = (insn, label)
+        label
+      })
+      return SwitchInsn(
+        Table(TableSwitch::{
+          default_label: defaultLabel,
+          low,
+          high,
+          labels: FixedArray::from_array(labels),
+        }),
+      )
     }
     LOOKUPSWITCH => {
       guard self.code.read_bytes(3) is Some([0, 0, 0])  // JVMS requirement
       let default = read_offset_32()
-      self.jump_table[default] = (insn, self.assign_new_label())
+      let defaultLabel = self.assign_new_label()
+      self.jump_table[default] = (insn, defaultLabel)
       let npairs = self.code.read_int().unwrap()
-      for _ in 0..=(npairs - 1) {
+      let labels = Array::makei(npairs, _ => {
         guard self.code.read_int() is Some(_)  // match value
         let offset = read_offset_32()
-        self.jump_table[offset] = (insn, self.assign_new_label())
-      }
+        let label = self.assign_new_label()
+        self.jump_table[offset] = (insn, label)
+        label
+      })
+      return SwitchInsn(
+        Lookup(LookupSwitch::{
+          default_label: defaultLabel,
+          match_offset_pairs: FixedArray::from_array(labels.map(it => (0, it))),
+        }),
+      )
     }
     _ => panic()
   }
