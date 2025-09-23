@@ -7,9 +7,9 @@
     "TheWaWaR/clap": "0.2.5"
   },
   "readme": "README.md",
-  "repository": "",
+  "repository": "https://github.com/iceBear67/mbt-classfile",
   "license": "Apache-2.0",
-  "keywords": [],
-  "description": "",
+  "keywords": ["java", "compiler", "disassembler"],
+  "description": "Experimental JVMS ch.4(classfile) and ch.6(bytecode) parser implementation in MoonBit.",
   "preferred-target": "js"
 }
