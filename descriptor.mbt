@@ -27,7 +27,7 @@ pub fn to_simple_name(self : JavaTypes) -> String {
     Int => "int"
     Object(o) => {
       let index = o.rev_find("/").unwrap_or(0)
-      let result = (try? o[index+1:]).unwrap()
+      let result = (try? o[index + 1:]).unwrap()
       result.to_string()
     }
     Array(arr) => arr.to_simple_name() + "[]"

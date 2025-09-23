@@ -9,7 +9,7 @@ pub(all) enum VerificationTypeInfo {
   UninitializedThis
   Object(ConstantClassInfo)
   Uninitialized(UInt16)
-} derive(Show, Eq)
+} derive(Show)
 
 ///|
 /// A stack map frame is represented by a discriminated union, stack_map_frame, 
@@ -23,23 +23,23 @@ pub(all) enum StackMapFrame {
   SameFrameExtended(UInt16) //offset delta
   AppendFrame(AppendFrame)
   FullFrame(FullFrame)
-} derive(Show, Eq)
+} derive(Show)
 
 ///|
 pub(all) struct SameLocalOneFrameExt {
   offset_delta : UInt16
   stack : VerificationTypeInfo
-} derive(Show, Eq)
+} derive(Show)
 
 ///|
 pub(all) struct AppendFrame { // type: 252-254
   offset_delta : UInt16
   locals : FixedArray[VerificationTypeInfo] // len: frame_type - 251
-} derive(Show, Eq)
+} derive(Show)
 
 ///|
 pub(all) struct FullFrame {
   offset_delta : UInt16
   locals : FixedArray[VerificationTypeInfo]
   stack : FixedArray[VerificationTypeInfo]
-} derive(Show, Eq)
+} derive(Show)

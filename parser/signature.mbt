@@ -157,8 +157,7 @@ fn parse_type_arguments(
       break
     }
     match ch {
-      '*' =>
-        foundArguments.push(Unknown)
+      '*' => foundArguments.push(Unknown)
       '+' =>
         foundArguments.push(
           @classfile.WildcardTypeSig::{

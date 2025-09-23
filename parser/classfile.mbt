@@ -33,14 +33,16 @@ pub fn parse_class(view : &@bytebuf.ByteBuf) -> @classfile.ClassFile raise {
   let mut superClass : String? = None
   if superClassIdx != 0 {
     guard constant_pool.at(superClassIdx.reinterpret_as_int())
-      is @classfile.Class(scc) && constant_pool.at(scc.name_index.reinterpret_as_int()) is Utf8(sc)
+      is @classfile.Class(scc) &&
+      constant_pool.at(scc.name_index.reinterpret_as_int()) is Utf8(sc)
     superClass = Some(sc)
   }
   let interfaces = view
     .parse_interfaces()
     .map(u => {
       guard constant_pool.at(u.reinterpret_as_int()) is Class(classInfo) &&
-      constant_pool.at(classInfo.name_index.reinterpret_as_int()) is Utf8(name)
+        constant_pool.at(classInfo.name_index.reinterpret_as_int())
+        is Utf8(name)
       name
     })
   let fields = view.parse_fields(constant_pool)
@@ -111,47 +113,58 @@ fn parse_constant_pool(
   guard self.read_uint16() is Some(count) else {
     raise fail("Invalid constant pool count.")
   }
+  let parent : Ref[@classfile.ConstantPool] = Ref::new(@classfile.ConstantPool::{
+    internal_arr: FixedArray::makei(0, _ => panic()),
+  }) // dummp ref
   @classfile.ConstantPool::{
-    internal_arr: FixedArray::makei(count.to_int() - 1, _ => self.parse_constant_entry()),
+    internal_arr: FixedArray::makei(count.to_int() - 1, _ => self.parse_constant_entry(
+      parent,
+    )),
   }
 }
 
 ///|
 fn parse_constant_entry(
   self : &@bytebuf.ByteBuf,
+  par : Ref[@classfile.ConstantPool],
 ) -> @classfile.ConstantType raise {
   guard self.read_byte() is Some(tag) else {
     raise fail("Expect constant pool entry but EOF.")
   }
   match tag {
-    7 => @classfile.ConstantType::Class(parse_const_class_info(self))
-    9 => @classfile.ConstantType::FieldRef(parse_const_fieldref_info(self))
-    10 => @classfile.ConstantType::MethodRef(parse_const_methodref_info(self))
+    7 => @classfile.ConstantType::Class(self.parse_const_class_info(par))
+    9 => @classfile.ConstantType::FieldRef(self.parse_const_fieldref_info(par))
+    10 =>
+      @classfile.ConstantType::MethodRef(self.parse_const_methodref_info(par))
     11 =>
       @classfile.ConstantType::InterfaceMethodRef(
-        parse_const_interfacemethodref_info(self),
+        self.parse_const_interfacemethodref_info(par),
       )
-    8 => @classfile.ConstantType::String(parse_const_string_info(self))
-    3 => @classfile.ConstantType::Integer(parse_const_integer_info(self))
-    4 => @classfile.ConstantType::Float(parse_const_float_info(self))
-    5 => @classfile.ConstantType::Long(parse_const_long_info(self))
-    6 => @classfile.ConstantType::Double(parse_const_double_info(self))
+    8 => @classfile.ConstantType::String(self.parse_const_string_info(par))
+    3 => @classfile.ConstantType::Integer(self.parse_const_integer_info(par))
+    4 => @classfile.ConstantType::Float(self.parse_const_float_info(par))
+    5 => @classfile.ConstantType::Long(self.parse_const_long_info(par))
+    6 => @classfile.ConstantType::Double(self.parse_const_double_info(par))
     12 =>
-      @classfile.ConstantType::NameAndType(parse_const_name_and_type_info(self))
-    1 => @classfile.ConstantType::Utf8(parse_const_utf8_info(self))
+      @classfile.ConstantType::NameAndType(
+        self.parse_const_name_and_type_info(par),
+      )
+    1 => @classfile.ConstantType::Utf8(self.parse_const_utf8_info())
     15 =>
       @classfile.ConstantType::MethodHandle(
-        parse_const_method_handle_info(self),
+        self.parse_const_method_handle_info(par),
       )
     16 =>
-      @classfile.ConstantType::MethodType(parse_const_method_type_info(self))
-    17 => @classfile.ConstantType::Dynamic(parse_const_dynamic_info(self))
+      @classfile.ConstantType::MethodType(
+        self.parse_const_method_type_info(par),
+      )
+    17 => @classfile.ConstantType::Dynamic(self.parse_const_dynamic_info(par))
     18 =>
       @classfile.ConstantType::InvokeDynamic(
-        parse_const_invoke_dynamic_info(self),
+        self.parse_const_invoke_dynamic_info(par),
       )
-    19 => @classfile.ConstantType::Module(parse_const_module_info(self))
-    20 => @classfile.ConstantType::Package(parse_const_package_info(self))
+    19 => @classfile.ConstantType::Module(self.parse_const_module_info(par))
+    20 => @classfile.ConstantType::Package(self.parse_const_package_info(par))
     _ => raise fail("Unknown constant pool tag: " + tag.to_string())
   }
 }

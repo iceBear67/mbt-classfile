@@ -27,10 +27,11 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
 // THE POSSIBILITY OF SUCH DAMAGE.
 
-
 // See https://docs.oracle.com/javase/specs/jvms/se9/html/jvms-6.html.
 
+///|
 const WIDE = 196
+
 ///|
 const NOP = 0 // visitInsn
 
@@ -88,11 +89,11 @@ const SIPUSH = 17 // -
 ///|
 const LDC = 18 // visitLdcInsn
 
+///|
 const LDC_W = 19
 
+///|
 const LDC2_W = 20
-
-
 
 ///|
 const ILOAD = 21 // visitVarInsn
@@ -415,11 +416,13 @@ const IF_ACMPNE = 166 // -
 ///|
 const GOTO = 167 // -
 
+///|
 const GOTO_W = 200
 
 ///|
 const JSR = 168 // -
 
+///|
 const JSR_W = 201
 
 ///|

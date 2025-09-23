@@ -30,19 +30,19 @@ pub(all) enum AttributeInfo {
   NestMembers(FixedArray[ConstantClassInfo])
   Record(FixedArray[RecordComponent])
   PermittedSubclasses(FixedArray[ConstantClassInfo])
-} derive(Show, Eq)
+} derive(Show)
 
 ///|
 pub(all) struct RecordComponent {
   name : String
   descriptor : String
   attributes : FixedArray[AttributeInfo]
-} derive(Show, Eq)
+} derive(Show)
 
 ///|
 pub(all) struct ConstantValueAttribute {
   constant_value : ConstantType
-} derive(Show, Eq)
+} derive(Show)
 
 ///|
 pub(all) struct CodeAttribute {
@@ -51,7 +51,7 @@ pub(all) struct CodeAttribute {
   code : Bytes
   exception_table : FixedArray[ExceptionTableEntry]
   attributes : FixedArray[AttributeInfo]
-} derive(Show, Eq)
+} derive(Show)
 
 ///|
 pub(all) struct ExceptionTableEntry {
@@ -59,22 +59,22 @@ pub(all) struct ExceptionTableEntry {
   end_pc : UInt16
   handler_pc : UInt16
   catch_type : ConstantClassInfo?
-} derive(Show, Eq)
+} derive(Show)
 
 ///|
 pub(all) struct StackMapTableAttribute {
   entries : FixedArray[StackMapFrame]
-} derive(Show, Eq)
+} derive(Show)
 
 ///|
 pub(all) struct ExceptionsAttribute {
   exception_index_table : FixedArray[ConstantClassInfo]
-} derive(Show, Eq)
+} derive(Show)
 
 ///|
 pub(all) struct InnerClassAttribute {
   classes : FixedArray[InnerClassInfo]
-} derive(Show, Eq)
+} derive(Show)
 
 ///|
 pub(all) struct InnerClassInfo {
@@ -85,39 +85,39 @@ pub(all) struct InnerClassInfo {
   outer_class : ConstantClassInfo?
   inner_name : String
   inner_class_access_flags : Modifiers
-} derive(Show, Eq)
+} derive(Show)
 
 ///|
 pub(all) struct EnclosingMethodAttribute {
   class : ConstantClassInfo
   methodInfo : ConstantNameAndTypeInfo?
-} derive(Show, Eq)
+} derive(Show)
 
 ///|
 pub(all) struct SignatureAttribute {
   signature : String // todo parser
-} derive(Show, Eq)
+} derive(Show)
 
 ///|
 pub(all) struct SourceFileAttribute {
   sourceFile : String
-} derive(Show, Eq)
+} derive(Show)
 
 ///|
 pub(all) struct SourceDebugExtensionAttribute {
   debug_extension : Bytes
-} derive(Show, Eq)
+} derive(Show)
 
 ///|
 pub(all) struct LineNumberTableAttribute {
   line_number_table : FixedArray[LineNumberTableEntry]
-} derive(Show, Eq)
+} derive(Show)
 
 ///|
 pub(all) struct LineNumberTableEntry {
   start_pc : UInt16
   line_number : UInt16
-} derive(Show, Eq)
+} derive(Show)
 
 ///|
 pub(all) struct LocalVariableTableEntry {
@@ -126,12 +126,12 @@ pub(all) struct LocalVariableTableEntry {
   name : String
   descriptor : String
   index : UInt16
-} derive(Show, Eq)
+} derive(Show)
 
 ///|
 pub(all) struct LocalVariableTypeTableAttribute {
   local_variable_type_table : FixedArray[LocalVariableTypeTableEntry]
-} derive(Show, Eq)
+} derive(Show)
 
 ///|
 pub(all) struct LocalVariableTypeTableEntry {
@@ -140,19 +140,19 @@ pub(all) struct LocalVariableTypeTableEntry {
   name : String
   signature : String
   index : UInt16
-} derive(Show, Eq)
+} derive(Show)
 
 ///|
 pub(all) struct BootstrapMethod {
   bootstrap_method_ref : ConstantMethodHandleInfo
   bootstrap_arguments : FixedArray[ConstantType]
-} derive(Show, Eq)
+} derive(Show)
 
 ///|
 pub(all) struct MethodParameter {
   name : String
   access_flags : Modifiers
-} derive(Show, Eq)
+} derive(Show)
 
 ///|
 pub(all) struct ModuleAttribute {
@@ -164,36 +164,36 @@ pub(all) struct ModuleAttribute {
   opens : FixedArray[ModuleOpen]
   uses_index : FixedArray[ConstantClassInfo]
   provides : FixedArray[ModuleProvide]
-} derive(Show, Eq)
+} derive(Show)
 
 ///|
 pub(all) struct ModuleRequire {
   requires : ConstantModuleInfo
   requires_flags : UInt16
   requires_version : String?
-} derive(Show, Eq)
+} derive(Show)
 
 ///|
 pub(all) struct ModuleExport {
   exports : ConstantPackageInfo
   exports_flags : UInt16
   exports_to : FixedArray[ConstantModuleInfo]
-} derive(Show, Eq)
+} derive(Show)
 
 ///|
 pub(all) struct ModuleOpen {
   opens : ConstantPackageInfo
   opens_flags : UInt16
   opens_to : FixedArray[ConstantModuleInfo]
-} derive(Show, Eq)
+} derive(Show)
 
 ///|
 pub(all) struct ModuleProvide {
   provides : ConstantClassInfo
   provides_with : FixedArray[ConstantClassInfo]
-} derive(Show, Eq)
+} derive(Show)
 
 ///|
 pub(all) struct ModulePackagesAttribute {
   package_index : FixedArray[ConstantPackageInfo]
-} derive(Show, Eq)
+} derive(Show)

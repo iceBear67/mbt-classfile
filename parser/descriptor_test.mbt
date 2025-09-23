@@ -14,7 +14,7 @@ test "test descriptor parser" {
   )
   inspect(
     @parser.parse_descriptor_method("()V"),
-    content="{parameters: [], return_type: Void}"
+    content="{parameters: [], return_type: Void}",
   )
   let expect =
     #|{parameters: [Int, Long, Boolean, Double, Char, Float, Void, Short, Array(Object("java/lang/Object"))], return_type: Void}
