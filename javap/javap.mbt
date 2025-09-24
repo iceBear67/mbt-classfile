@@ -94,7 +94,7 @@ pub fn print(_self : @classfile.ClassFile) -> Unit {
             continue
           }
         }
-        for insn in insns {
+        for insn in insns.instructions {
           println("        \{insn.to_string()}")
         }
       } else {
