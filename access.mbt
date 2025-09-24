@@ -88,7 +88,7 @@ const ACC_MANDATED : UInt16 = 0x8000
 
 ///|
 /// method
-const ACC_STRICT : UInt16 = 0x8000
+const ACC_STRICT : UInt16 = 0x0800
 
 ///|
 pub enum Modifier {
@@ -179,6 +179,7 @@ pub fn modifier_to_string(self : Modifier) -> String {
     Bridge => "bridge"
     Varargs => "varargs"
     Native => "native"
+    Strict => "strictfp"
     _ => panic() //todo support module acc
   }
 }
@@ -307,6 +308,9 @@ pub fn to_method_modifiers(permBit : UInt16) -> Modifiers {
   }
   if (permBit & ACC_NATIVE) != 0 {
     array.push(Native)
+  }
+  if (permBit & ACC_STRICT) != 0 {
+    array.push(Strict)
   }
   if (permBit & ACC_ABSTRACT) != 0 {
     array.push(Abstract)
