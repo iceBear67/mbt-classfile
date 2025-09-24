@@ -31,14 +31,8 @@ pub(all) enum ConstantType {
   Package(ConstantPackageInfo)
 }
 
-pub fn to_string(self: ConstantType) -> String {
-  let sb = StringBuilder::new()
-  self.output(sb)
-  sb.to_string()
-}
-
 // There's a back reference to the table so using derive Show will just blow up the stack..
-impl Show for ConstantType with output(self, logger) {
+pub impl Show for ConstantType with output(self, logger) {
   let r = match self {
     ConstantType::Class(info) => "Class \{info.name()}"
     ConstantType::FieldRef(info) => {
