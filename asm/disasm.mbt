@@ -12,10 +12,16 @@ priv struct Disassembler {
 }
 
 ///|
+pub struct DisassembleResult {
+  offsetToIndex : Map[Int, Int]
+  instructions : Array[Instruction]
+}
+
+///|
 pub fn disassemble(
   code : &@bytebuf.ByteBuf,
   class : @classfile.ClassFile,
-) -> Array[Instruction] raise {
+) -> DisassembleResult raise {
   let disasm = Disassembler::{
     code,
     class,
@@ -24,8 +30,18 @@ pub fn disassemble(
     offsets: Array::makei(0, _ => panic()),
   }
   disasm.parse_code()
-  disasm.resolve_control_flow()
-  disasm.found
+  let jmp = disasm.jump_table
+  let offsets = disasm.offsets
+  let mut insertedInsns = 0
+  let offsetToIndex : Map[Int, Int] = {}
+  for i = 0; i < offsets.length(); i = i + 1 {
+    let offset = offsets[i]
+    guard jmp.get(offset) is Some((_, label)) else { continue }
+    offsetToIndex[offset] = i + insertedInsns
+    disasm.found.insert(i + insertedInsns, LabelInsn(label))
+    insertedInsns = insertedInsns + 1
+  }
+  DisassembleResult::{ offsetToIndex, instructions: disasm.found }
 }
 
 ///|
@@ -244,19 +260,6 @@ fn parse_code(self : Disassembler) -> Unit raise {
       c => self.parse_flow_insn(c)
     }
     self.found.push(insn)
-  }
-}
-
-///|
-fn resolve_control_flow(self : Disassembler) -> Unit {
-  let jmp = self.jump_table
-  let offsets = self.offsets
-  let mut insertedInsns = 0
-  for i = 0; i < offsets.length(); i = i + 1 {
-    let offset = offsets[i]
-    guard jmp.get(offset) is Some((opcode, label)) else { continue }
-    self.found.insert(i + insertedInsns, LabelInsn(label))
-    insertedInsns = insertedInsns + 1
   }
 }
 

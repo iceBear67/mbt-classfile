@@ -1,6 +1,6 @@
 {
   "name": "iceBear67/classfile",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "deps": {
     "iceBear67/bytebuf": "0.2.0",
     "moonbitlang/x": "0.4.34",

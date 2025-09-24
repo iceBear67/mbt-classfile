@@ -11,10 +11,11 @@ test "example" {
       is Some(Code(code_attr)) else {
       continue
     }
-    let insns = @asm.disassemble(
+    let result = @asm.disassemble(
       @bytebuf.make_unpooled_from_bytes(code_attr.code),
       class,
     )
+    let insns = result.instructions
     let basic_blocks : Array[Array[@asm.Instruction]] = Array::makei(0, _ => panic())
     // we don't draw edges here for simplicity
     let mut current_block : Array[@asm.Instruction] = Array::makei(0, _ => panic())
