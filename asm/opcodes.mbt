@@ -30,492 +30,492 @@
 // See https://docs.oracle.com/javase/specs/jvms/se9/html/jvms-6.html.
 
 ///|
-const WIDE = 196
+pub const WIDE = 196
 
 ///|
-const NOP = 0 // visitInsn
+pub const NOP = 0 // visitInsn
 
 ///|
-const ACONST_NULL = 1 // -
+pub const ACONST_NULL = 1 // -
 
 ///|
-const ICONST_M1 = 2 // -
+pub const ICONST_M1 = 2 // -
 
 ///|
-const ICONST_0 = 3 // -
+pub const ICONST_0 = 3 // -
 
 ///|
-const ICONST_1 = 4 // -
+pub const ICONST_1 = 4 // -
 
 ///|
-const ICONST_2 = 5 // -
+pub const ICONST_2 = 5 // -
 
 ///|
-const ICONST_3 = 6 // -
+pub const ICONST_3 = 6 // -
 
 ///|
-const ICONST_4 = 7 // -
+pub const ICONST_4 = 7 // -
 
 ///|
-const ICONST_5 = 8 // -
+pub const ICONST_5 = 8 // -
 
 ///|
-const LCONST_0 = 9 // -
+pub const LCONST_0 = 9 // -
 
 ///|
-const LCONST_1 = 10 // -
+pub const LCONST_1 = 10 // -
 
 ///|
-const FCONST_0 = 11 // -
+pub const FCONST_0 = 11 // -
 
 ///|
-const FCONST_1 = 12 // -
+pub const FCONST_1 = 12 // -
 
 ///|
-const FCONST_2 = 13 // -
+pub const FCONST_2 = 13 // -
 
 ///|
-const DCONST_0 = 14 // -
+pub const DCONST_0 = 14 // -
 
 ///|
-const DCONST_1 = 15 // -
+pub const DCONST_1 = 15 // -
 
 ///|
-const BIPUSH = 16 // visitIntInsn
+pub const BIPUSH = 16 // visitIntInsn
 
 ///|
-const SIPUSH = 17 // -
+pub const SIPUSH = 17 // -
 
 ///|
-const LDC = 18 // visitLdcInsn
+pub const LDC = 18 // visitLdcInsn
 
 ///|
-const LDC_W = 19
+pub const LDC_W = 19
 
 ///|
-const LDC2_W = 20
+pub const LDC2_W = 20
 
 ///|
-const ILOAD = 21 // visitVarInsn
+pub const ILOAD = 21 // visitVarInsn
 
 ///|
-const LLOAD = 22 // -
+pub const LLOAD = 22 // -
 
 ///|
-const FLOAD = 23 // -
+pub const FLOAD = 23 // -
 
 ///|
-const DLOAD = 24 // -
+pub const DLOAD = 24 // -
 
 ///|
-const ALOAD = 25 // -
+pub const ALOAD = 25 // -
 
 ///|
-const IALOAD = 46 // visitInsn
+pub const IALOAD = 46 // visitInsn
 
 ///|
-const LALOAD = 47 // -
+pub const LALOAD = 47 // -
 
 ///|
-const FALOAD = 48 // -
+pub const FALOAD = 48 // -
 
 ///|
-const DALOAD = 49 // -
+pub const DALOAD = 49 // -
 
 ///|
-const AALOAD = 50 // -
+pub const AALOAD = 50 // -
 
 ///|
-const BALOAD = 51 // -
+pub const BALOAD = 51 // -
 
 ///|
-const CALOAD = 52 // -
+pub const CALOAD = 52 // -
 
 ///|
-const SALOAD = 53 // -
+pub const SALOAD = 53 // -
 
 ///|
-const ISTORE = 54 // visitVarInsn
+pub const ISTORE = 54 // visitVarInsn
 
 ///|
-const LSTORE = 55 // -
+pub const LSTORE = 55 // -
 
 ///|
-const FSTORE = 56 // -
+pub const FSTORE = 56 // -
 
 ///|
-const DSTORE = 57 // -
+pub const DSTORE = 57 // -
 
 ///|
-const ASTORE = 58 // -
+pub const ASTORE = 58 // -
 
 ///|
-const IASTORE = 79 // visitInsn
+pub const IASTORE = 79 // visitInsn
 
 ///|
-const LASTORE = 80 // -
+pub const LASTORE = 80 // -
 
 ///|
-const FASTORE = 81 // -
+pub const FASTORE = 81 // -
 
 ///|
-const DASTORE = 82 // -
+pub const DASTORE = 82 // -
 
 ///|
-const AASTORE = 83 // -
+pub const AASTORE = 83 // -
 
 ///|
-const BASTORE = 84 // -
+pub const BASTORE = 84 // -
 
 ///|
-const CASTORE = 85 // -
+pub const CASTORE = 85 // -
 
 ///|
-const SASTORE = 86 // -
+pub const SASTORE = 86 // -
 
 ///|
-const POP = 87 // -
+pub const POP = 87 // -
 
 ///|
-const POP2 = 88 // -
+pub const POP2 = 88 // -
 
 ///|
-const DUP = 89 // -
+pub const DUP = 89 // -
 
 ///|
-const DUP_X1 = 90 // -
+pub const DUP_X1 = 90 // -
 
 ///|
-const DUP_X2 = 91 // -
+pub const DUP_X2 = 91 // -
 
 ///|
-const DUP2 = 92 // -
+pub const DUP2 = 92 // -
 
 ///|
-const DUP2_X1 = 93 // -
+pub const DUP2_X1 = 93 // -
 
 ///|
-const DUP2_X2 = 94 // -
+pub const DUP2_X2 = 94 // -
 
 ///|
-const SWAP = 95 // -
+pub const SWAP = 95 // -
 
 ///|
-const IADD = 96 // -
+pub const IADD = 96 // -
 
 ///|
-const LADD = 97 // -
+pub const LADD = 97 // -
 
 ///|
-const FADD = 98 // -
+pub const FADD = 98 // -
 
 ///|
-const DADD = 99 // -
+pub const DADD = 99 // -
 
 ///|
-const ISUB = 100 // -
+pub const ISUB = 100 // -
 
 ///|
-const LSUB = 101 // -
+pub const LSUB = 101 // -
 
 ///|
-const FSUB = 102 // -
+pub const FSUB = 102 // -
 
 ///|
-const DSUB = 103 // -
+pub const DSUB = 103 // -
 
 ///|
-const IMUL = 104 // -
+pub const IMUL = 104 // -
 
 ///|
-const LMUL = 105 // -
+pub const LMUL = 105 // -
 
 ///|
-const FMUL = 106 // -
+pub const FMUL = 106 // -
 
 ///|
-const DMUL = 107 // -
+pub const DMUL = 107 // -
 
 ///|
-const IDIV = 108 // -
+pub const IDIV = 108 // -
 
 ///|
-const LDIV = 109 // -
+pub const LDIV = 109 // -
 
 ///|
-const FDIV = 110 // -
+pub const FDIV = 110 // -
 
 ///|
-const DDIV = 111 // -
+pub const DDIV = 111 // -
 
 ///|
-const IREM = 112 // -
+pub const IREM = 112 // -
 
 ///|
-const LREM = 113 // -
+pub const LREM = 113 // -
 
 ///|
-const FREM = 114 // -
+pub const FREM = 114 // -
 
 ///|
-const DREM = 115 // -
+pub const DREM = 115 // -
 
 ///|
-const INEG = 116 // -
+pub const INEG = 116 // -
 
 ///|
-const LNEG = 117 // -
+pub const LNEG = 117 // -
 
 ///|
-const FNEG = 118 // -
+pub const FNEG = 118 // -
 
 ///|
-const DNEG = 119 // -
+pub const DNEG = 119 // -
 
 ///|
-const ISHL = 120 // -
+pub const ISHL = 120 // -
 
 ///|
-const LSHL = 121 // -
+pub const LSHL = 121 // -
 
 ///|
-const ISHR = 122 // -
+pub const ISHR = 122 // -
 
 ///|
-const LSHR = 123 // -
+pub const LSHR = 123 // -
 
 ///|
-const IUSHR = 124 // -
+pub const IUSHR = 124 // -
 
 ///|
-const LUSHR = 125 // -
+pub const LUSHR = 125 // -
 
 ///|
-const IAND = 126 // -
+pub const IAND = 126 // -
 
 ///|
-const LAND = 127 // -
+pub const LAND = 127 // -
 
 ///|
-const IOR = 128 // -
+pub const IOR = 128 // -
 
 ///|
-const LOR = 129 // -
+pub const LOR = 129 // -
 
 ///|
-const IXOR = 130 // -
+pub const IXOR = 130 // -
 
 ///|
-const LXOR = 131 // -
+pub const LXOR = 131 // -
 
 ///|
-const IINC = 132 // visitIincInsn
+pub const IINC = 132 // visitIincInsn
 
 ///|
-const I2L = 133 // visitInsn
+pub const I2L = 133 // visitInsn
 
 ///|
-const I2F = 134 // -
+pub const I2F = 134 // -
 
 ///|
-const I2D = 135 // -
+pub const I2D = 135 // -
 
 ///|
-const L2I = 136 // -
+pub const L2I = 136 // -
 
 ///|
-const L2F = 137 // -
+pub const L2F = 137 // -
 
 ///|
-const L2D = 138 // -
+pub const L2D = 138 // -
 
 ///|
-const F2I = 139 // -
+pub const F2I = 139 // -
 
 ///|
-const F2L = 140 // -
+pub const F2L = 140 // -
 
 ///|
-const F2D = 141 // -
+pub const F2D = 141 // -
 
 ///|
-const D2I = 142 // -
+pub const D2I = 142 // -
 
 ///|
-const D2L = 143 // -
+pub const D2L = 143 // -
 
 ///|
-const D2F = 144 // -
+pub const D2F = 144 // -
 
 ///|
-const I2B = 145 // -
+pub const I2B = 145 // -
 
 ///|
-const I2C = 146 // -
+pub const I2C = 146 // -
 
 ///|
-const I2S = 147 // -
+pub const I2S = 147 // -
 
 ///|
-const LCMP = 148 // -
+pub const LCMP = 148 // -
 
 ///|
-const FCMPL = 149 // -
+pub const FCMPL = 149 // -
 
 ///|
-const FCMPG = 150 // -
+pub const FCMPG = 150 // -
 
 ///|
-const DCMPL = 151 // -
+pub const DCMPL = 151 // -
 
 ///|
-const DCMPG = 152 // -
+pub const DCMPG = 152 // -
 
 ///|
-const IFEQ = 153 // visitJumpInsn
+pub const IFEQ = 153 // visitJumpInsn
 
 ///|
-const IFNE = 154 // -
+pub const IFNE = 154 // -
 
 ///|
-const IFLT = 155 // -
+pub const IFLT = 155 // -
 
 ///|
-const IFGE = 156 // -
+pub const IFGE = 156 // -
 
 ///|
-const IFGT = 157 // -
+pub const IFGT = 157 // -
 
 ///|
-const IFLE = 158 // -
+pub const IFLE = 158 // -
 
 ///|
-const IF_ICMPEQ = 159 // -
+pub const IF_ICMPEQ = 159 // -
 
 ///|
-const IF_ICMPNE = 160 // -
+pub const IF_ICMPNE = 160 // -
 
 ///|
-const IF_ICMPLT = 161 // -
+pub const IF_ICMPLT = 161 // -
 
 ///|
-const IF_ICMPGE = 162 // -
+pub const IF_ICMPGE = 162 // -
 
 ///|
-const IF_ICMPGT = 163 // -
+pub const IF_ICMPGT = 163 // -
 
 ///|
-const IF_ICMPLE = 164 // -
+pub const IF_ICMPLE = 164 // -
 
 ///|
-const IF_ACMPEQ = 165 // -
+pub const IF_ACMPEQ = 165 // -
 
 ///|
-const IF_ACMPNE = 166 // -
+pub const IF_ACMPNE = 166 // -
 
 ///|
-const GOTO = 167 // -
+pub const GOTO = 167 // -
 
 ///|
-const GOTO_W = 200
+pub const GOTO_W = 200
 
 ///|
-const JSR = 168 // -
+pub const JSR = 168 // -
 
 ///|
-const JSR_W = 201
+pub const JSR_W = 201
 
 ///|
-const RET = 169 // visitVarInsn
+pub const RET = 169 // visitVarInsn
 
 ///|
-const TABLESWITCH = 170 // visiTableSwitchInsn
+pub const TABLESWITCH = 170 // visiTableSwitchInsn
 
 ///|
-const LOOKUPSWITCH = 171 // visitLookupSwitch
+pub const LOOKUPSWITCH = 171 // visitLookupSwitch
 
 ///|
-const IRETURN = 172 // visitInsn
+pub const IRETURN = 172 // visitInsn
 
 ///|
-const LRETURN = 173 // -
+pub const LRETURN = 173 // -
 
 ///|
-const FRETURN = 174 // -
+pub const FRETURN = 174 // -
 
 ///|
-const DRETURN = 175 // -
+pub const DRETURN = 175 // -
 
 ///|
-const ARETURN = 176 // -
+pub const ARETURN = 176 // -
 
 ///|
-const RETURN = 177 // -
+pub const RETURN = 177 // -
 
 ///|
-const GETSTATIC = 178 // visitFieldInsn
+pub const GETSTATIC = 178 // visitFieldInsn
 
 ///|
-const PUTSTATIC = 179 // -
+pub const PUTSTATIC = 179 // -
 
 ///|
-const GETFIELD = 180 // -
+pub const GETFIELD = 180 // -
 
 ///|
-const PUTFIELD = 181 // -
+pub const PUTFIELD = 181 // -
 
 ///|
-const INVOKEVIRTUAL = 182 // visitMethodInsn
+pub const INVOKEVIRTUAL = 182 // visitMethodInsn
 
 ///|
-const INVOKESPECIAL = 183 // -
+pub const INVOKESPECIAL = 183 // -
 
 ///|
-const INVOKESTATIC = 184 // -
+pub const INVOKESTATIC = 184 // -
 
 ///|
-const INVOKEINTERFACE = 185 // -
+pub const INVOKEINTERFACE = 185 // -
 
 ///|
-const INVOKEDYNAMIC = 186 // visitInvokeDynamicInsn
+pub const INVOKEDYNAMIC = 186 // visitInvokeDynamicInsn
 
 ///|
-const NEW = 187 // visitTypeInsn
+pub const NEW = 187 // visitTypeInsn
 
 ///|
-const NEWARRAY = 188 // visitIntInsn
+pub const NEWARRAY = 188 // visitIntInsn
 
 ///|
-const ANEWARRAY = 189 // visitTypeInsn
+pub const ANEWARRAY = 189 // visitTypeInsn
 
 ///|
-const ARRAYLENGTH = 190 // visitInsn
+pub const ARRAYLENGTH = 190 // visitInsn
 
 ///|
-const ATHROW = 191 // -
+pub const ATHROW = 191 // -
 
 ///|
-const CHECKCAST = 192 // visitTypeInsn
+pub const CHECKCAST = 192 // visitTypeInsn
 
 ///|
-const INSTANCEOF = 193 // -
+pub const INSTANCEOF = 193 // -
 
 ///|
-const MONITORENTER = 194 // visitInsn
+pub const MONITORENTER = 194 // visitInsn
 
 ///|
-const MONITOREXIT = 195 // -
+pub const MONITOREXIT = 195 // -
 
 ///|
-const MULTIANEWARRAY = 197 // visitMultiANewArrayInsn
+pub const MULTIANEWARRAY = 197 // visitMultiANewArrayInsn
 
 ///|
-const IFNULL = 198 // visitJumpInsn
+pub const IFNULL = 198 // visitJumpInsn
 
 ///|
-const IFNONNULL = 199 // -
+pub const IFNONNULL = 199 // -
 
-fn int_to_opcode_name(opcode: Int) -> String {
+pub fn int_to_opcode_name(opcode: Int) -> String {
   match opcode {
     NOP => "NOP"
     ACONST_NULL => "ACONST_NULL"

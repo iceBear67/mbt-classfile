@@ -1,5 +1,5 @@
 ///|
-typealias Int as Opcode
+pub typealias Int as Opcode
 
 ///|
 pub(all) struct Label(String) derive(Show)
