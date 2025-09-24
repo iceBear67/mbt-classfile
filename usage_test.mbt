@@ -20,7 +20,8 @@ test "example" {
     let mut current_block : Array[@asm.Instruction] = Array::makei(0, _ => panic())
     for instruction in insns {
       match instruction {
-        SwitchInsn(Table(_)) | SwitchInsn(Lookup(_)) | ControlFlowInsn(_, _) => { // opcode, label are omitted
+        SwitchInsn(Table(_)) | SwitchInsn(Lookup(_)) | ControlFlowInsn(_, _)
+        | LabelInsn(_)  => { // opcode, label are omitted
           current_block.push(instruction)
           basic_blocks.push(current_block)
           current_block = Array::makei(0, _ => panic())
@@ -34,7 +35,7 @@ test "example" {
     blocks_to_method[method.name] = basic_blocks
   }
   let expect =
-  #|{"<init>": [[ALOAD index:Some("0"), INVOKESPECIAL target:java/lang/Object ()V, RETURN #None]], "reallyIHaveToControlYou": [[ILOAD index:Some("0"), ISTORE index:Some("1"), ILOAD index:Some("0"), Label Label("L2"):, ILOAD index:Some("0"), IMUL, ISTORE index:Some("2"), ILOAD index:Some("1"), ILOAD index:Some("2"), IF_ICMPLE #Some("L0")], [GOTO #Some("L1")], [ILOAD index:Some("2"), ISTORE index:Some("0"), ILOAD index:Some("0"), Label Label("L0"):, BIPUSH Some("90"), IF_ICMPLT #Some("L2")], [RETURN #None]]}
+  #|{"<init>": [[ALOAD index:Some("0"), INVOKESPECIAL target:java/lang/Object ()V, RETURN #None]], "reallyIHaveToControlYou": [[ILOAD index:Some("0"), ISTORE index:Some("1"), ILOAD index:Some("0"), Label Label("L2"):], [ILOAD index:Some("0"), IMUL, ISTORE index:Some("2"), ILOAD index:Some("1"), ILOAD index:Some("2"), IF_ICMPLE #Some("L0")], [GOTO #Some("L1")], [ILOAD index:Some("2"), ISTORE index:Some("0"), ILOAD index:Some("0"), Label Label("L0"):], [BIPUSH Some("90"), IF_ICMPLT #Some("L2")], [RETURN #None]]}
   inspect(blocks_to_method, content = expect)
 }
 

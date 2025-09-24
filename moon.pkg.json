@@ -2,7 +2,6 @@
     "test-import": [
       "moonbitlang/x/fs",
       "iceBear67/classfile/parser",
-      "iceBear67/classfile/javap",
       "iceBear67/classfile/asm"
     ],
     "import": [
