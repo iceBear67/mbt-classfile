@@ -75,6 +75,10 @@ pub(all) enum Instruction {
   Insn(Opcode) // insns that have no operands. d2i i2d
 }
 
+pub impl Show for Instruction with output(self, out) {
+  out.write_string(self.to_string())
+}
+
 ///|
 pub fn to_string(self : Instruction) -> String {
   let sb = StringBuilder::new()
